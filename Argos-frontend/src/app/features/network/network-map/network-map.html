@@ -1,0 +1,26 @@
+<div class="map-toolbar">
+  <span class="map-toolbar-label">Lignes</span>
+  @for (line of lines(); track line.id) {
+    <label class="line-toggle">
+      <input
+        type="checkbox"
+        [checked]="isVisible(line)"
+        [attr.aria-label]="'Afficher la ligne ' + line.name"
+        (change)="toggleLine(line)"
+      />
+      <span class="line-badge" [style.background-color]="line.color" [style.color]="line.textColor">
+        {{ line.name }}
+      </span>
+    </label>
+  }
+  <span class="map-legend">
+    <span class="interchange-symbol" aria-hidden="true"></span>
+    Correspondance
+  </span>
+</div>
+
+@if (errorMessage(); as message) {
+  <p class="alert alert-error" role="alert">{{ message }}</p>
+}
+
+<div #map class="map" role="region" aria-label="Plan du réseau"></div>

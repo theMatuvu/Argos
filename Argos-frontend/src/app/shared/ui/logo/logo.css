@@ -1,0 +1,44 @@
+:host {
+  display: inline-flex;
+  width: 2rem;
+  height: 2rem;
+}
+
+svg {
+  width: 100%;
+  height: 100%;
+}
+
+.background-start {
+  stop-color: var(--color-brand-navy-light);
+}
+
+.background-end {
+  stop-color: var(--color-brand-navy-dark);
+}
+
+.swoosh-start {
+  stop-color: var(--color-brand-orange-start);
+}
+
+.swoosh-middle {
+  stop-color: var(--color-brand-orange-middle);
+}
+
+.swoosh-end {
+  stop-color: var(--color-brand-orange-end);
+}
+
+.letter {
+  fill: none;
+  stroke: var(--color-brand-letter);
+  stroke-width: 8.2;
+  stroke-linejoin: round;
+}
+
+.swoosh {
+  stroke: var(--color-brand-outline);
+  stroke-width: 2.3;
+  stroke-linejoin: round;
+  paint-order: stroke;
+}

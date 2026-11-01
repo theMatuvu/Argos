@@ -1,0 +1,79 @@
+<header class="page-header">
+  <h1 class="page-title">Comptes</h1>
+  <p class="page-subtitle">
+    Créer le compte d'un agent de terrain ou d'un responsable d'exploitation.
+  </p>
+</header>
+
+<section class="card card-narrow">
+  <h2 class="card-title">Nouveau compte</h2>
+
+  <form class="form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+    <div class="form-row">
+      <div class="form-field">
+        <label class="form-label" for="firstName">Prénom</label>
+        <input id="firstName" class="input" formControlName="firstName" autocomplete="off" />
+        @if (errorFor('firstName'); as error) {
+          <p class="field-error">{{ error }}</p>
+        }
+      </div>
+
+      <div class="form-field">
+        <label class="form-label" for="lastName">Nom</label>
+        <input id="lastName" class="input" formControlName="lastName" autocomplete="off" />
+        @if (errorFor('lastName'); as error) {
+          <p class="field-error">{{ error }}</p>
+        }
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-field">
+        <label class="form-label" for="username">Identifiant</label>
+        <input id="username" class="input" formControlName="username" autocomplete="off" />
+        @if (errorFor('username'); as error) {
+          <p class="field-error">{{ error }}</p>
+        }
+      </div>
+
+      <div class="form-field">
+        <label class="form-label" for="password">Mot de passe</label>
+        <input
+          id="password"
+          class="input"
+          type="password"
+          formControlName="password"
+          autocomplete="new-password"
+        />
+        @if (errorFor('password'); as error) {
+          <p class="field-error">{{ error }}</p>
+        }
+      </div>
+    </div>
+
+    <div class="form-field">
+      <label class="form-label" for="profile">Profil</label>
+      <select id="profile" class="input" formControlName="profile">
+        @for (profile of profiles; track profile) {
+          <option [value]="profile">{{ profileLabels[profile] }}</option>
+        }
+      </select>
+      @if (errorFor('profile'); as error) {
+        <p class="field-error">{{ error }}</p>
+      }
+    </div>
+
+    @if (successMessage(); as message) {
+      <p class="alert alert-success" role="status">{{ message }}</p>
+    }
+    @if (errorMessage(); as message) {
+      <p class="alert alert-error" role="alert">{{ message }}</p>
+    }
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary" [disabled]="submitting()">
+        Créer le compte
+      </button>
+    </div>
+  </form>
+</section>

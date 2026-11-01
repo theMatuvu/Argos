@@ -1,0 +1,49 @@
+.leaflet-container {
+  font-family: var(--font-family);
+}
+
+.leaflet-tile-pane {
+  filter: var(--map-tiles-filter);
+}
+
+.leaflet-stations-pane {
+  z-index: 450;
+}
+
+.station-marker {
+  fill: var(--color-surface);
+  fill-opacity: 1;
+  stroke-width: 2;
+}
+
+.station-marker-interchange {
+  stroke: var(--color-text);
+  stroke-width: 2.5;
+}
+
+.station-popup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.station-popup-name {
+  font-size: var(--font-size-md);
+}
+
+.station-popup-lines {
+  display: flex;
+  gap: var(--space-1);
+}
+
+.station-popup-link {
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-primary);
+  text-align: left;
+  text-decoration: underline;
+  cursor: pointer;
+}

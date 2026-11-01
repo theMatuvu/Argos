@@ -15,6 +15,12 @@ spring:
   sql:
     init:
       mode: always
+      data-locations:
+        - classpath:data.sql
+        - classpath:network.sql
+        - classpath:equipment.sql
+        - classpath:provider.sql
+        - classpath:incident.sql
 
 server:
   port: ${PORT:8080}

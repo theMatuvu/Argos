@@ -11,35 +11,43 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import lombok.Data;
-import org.efrei.argosbackend.domain.enums.EquipmentType;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.efrei.argosbackend.domain.model.enums.EquipmentType;
+import org.efrei.argosbackend.domain.model.enums.OperatingStatus;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.util.UUID;
 
 @Entity
-@Data
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "equipments")
 public class EquipmentEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
+    @JdbcTypeCode(SqlTypes.CHAR)
+    @Column(length = 36)
     private UUID id;
 
-    private String name;
-
+    @Column(nullable = false, unique = true, length = 50)
     private String reference;
 
+    @Column(nullable = false, length = 100)
     private String label;
 
-    @Column(name = "equipment_type", nullable = false)
-    private EquipmentType equipmentType;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "equipment_type", nullable = false, length = 30)
+    private EquipmentType type;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "station_id", nullable = false)
     private StationEntity station;
 
-    @Column(name = "is_broken", nullable = false)
-    private boolean isBroken;
-
-
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private OperatingStatus operatingStatus;
 }

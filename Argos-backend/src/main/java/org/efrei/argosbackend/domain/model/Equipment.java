@@ -1,16 +1,16 @@
 package org.efrei.argosbackend.domain.model;
 
-import org.efrei.argosbackend.domain.enums.EquipmentType;
+import org.efrei.argosbackend.domain.model.enums.EquipmentType;
+import org.efrei.argosbackend.domain.model.enums.OperatingStatus;
 
 import java.util.UUID;
 
 public record Equipment(
         UUID id,
-        String name,
         String reference,
         String label,
-        EquipmentType equipmentType,
+        EquipmentType type,
         Station station,
-        boolean isBroken
+        OperatingStatus operatingStatus
 ) {
 }

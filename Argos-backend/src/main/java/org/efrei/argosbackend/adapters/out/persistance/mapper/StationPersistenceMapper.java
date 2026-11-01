@@ -11,7 +11,8 @@ public class StationPersistenceMapper {
         return new Station(
                 station.getId(),
                 station.getName(),
-                station.getCoordinates()
+                station.getLatitude(),
+                station.getLongitude()
         );
     }
 }

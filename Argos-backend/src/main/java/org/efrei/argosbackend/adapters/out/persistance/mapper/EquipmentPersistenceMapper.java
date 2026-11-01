@@ -13,15 +13,14 @@ public class EquipmentPersistenceMapper {
         this.stationPersistenceMapper = stationPersistenceMapper;
     }
 
-    public Equipment toDomain(EquipmentEntity equipmentEntity) {
+    public Equipment toDomain(EquipmentEntity equipment) {
         return new Equipment(
-                equipmentEntity.getId(),
-                equipmentEntity.getName(),
-                equipmentEntity.getReference(),
-                equipmentEntity.getLabel(),
-                equipmentEntity.getEquipmentType(),
-                stationPersistenceMapper.toDomain(equipmentEntity.getStation()),
-                equipmentEntity.isBroken()
+                equipment.getId(),
+                equipment.getReference(),
+                equipment.getLabel(),
+                equipment.getType(),
+                stationPersistenceMapper.toDomain(equipment.getStation()),
+                equipment.getOperatingStatus()
         );
     }
 }
