@@ -13,6 +13,56 @@
   color: var(--color-text-muted);
 }
 
+.page-header-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.back-link {
+  display: inline-block;
+  margin-bottom: var(--space-4);
+  font-size: var(--font-size-sm);
+  text-decoration: none;
+}
+
+.back-link:hover {
+  text-decoration: underline;
+}
+
+.sections {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.details-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  gap: var(--space-4);
+  margin: 0;
+}
+
+.details-grid dt {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.details-grid dd {
+  margin: var(--space-1) 0 0;
+  font-weight: var(--font-weight-medium);
+}
+
+.reference {
+  font-family: var(--font-family-mono);
+}
+
+.date {
+  white-space: nowrap;
+}
+
 .card {
   padding: var(--space-5);
   background: var(--color-surface);
@@ -39,6 +89,7 @@
   border: 1px solid transparent;
   border-radius: var(--radius-md);
   font-weight: var(--font-weight-medium);
+  text-decoration: none;
   cursor: pointer;
   transition:
     background-color var(--transition-fast),
@@ -57,6 +108,16 @@
 
 .btn-primary:hover:not(:disabled) {
   background: var(--color-primary-hover);
+}
+
+.btn-secondary {
+  background: var(--color-surface);
+  border-color: var(--color-border);
+  color: var(--color-text);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: var(--color-background);
 }
 
 .btn-block {
@@ -88,7 +149,9 @@
 
 .form-actions {
   display: flex;
+  flex-wrap: wrap;
   justify-content: flex-end;
+  gap: var(--space-2);
 }
 
 .input {
@@ -106,6 +169,17 @@
   outline: none;
   border-color: var(--color-primary);
   box-shadow: 0 0 0 3px var(--color-primary-focus);
+}
+
+textarea.input {
+  min-height: 7rem;
+  resize: vertical;
+}
+
+.field-hint {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
 }
 
 .input.ng-invalid.ng-touched {
@@ -222,5 +296,9 @@
 @media (max-width: 48rem) {
   .card {
     padding: var(--space-4);
+  }
+
+  .date {
+    white-space: normal;
   }
 }

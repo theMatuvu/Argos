@@ -45,4 +45,14 @@ public class IncidentEntity {
     private ProviderEntity provider;
 
     private LocalDateTime resolvedAt;
+
+    public IncidentEntity(UUID id, EquipmentEntity equipment, String description, LocalDateTime openedAt,
+                          ProviderEntity provider, LocalDateTime resolvedAt) {
+        this.id = id;
+        this.equipment = equipment;
+        this.description = description;
+        this.openedAt = openedAt;
+        this.provider = provider;
+        this.resolvedAt = resolvedAt;
+    }
 }

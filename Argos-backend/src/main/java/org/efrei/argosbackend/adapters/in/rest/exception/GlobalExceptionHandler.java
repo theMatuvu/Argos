@@ -1,11 +1,10 @@
 package org.efrei.argosbackend.adapters.in.rest.exception;
 
-import org.efrei.argosbackend.domain.exception.EquipmentNotFoundException;
-import org.efrei.argosbackend.domain.exception.StationNotFoundException;
-import org.efrei.argosbackend.domain.exception.UserNotFoundException;
-import org.efrei.argosbackend.domain.exception.UsernameAlreadyUsedException;
+import org.efrei.argosbackend.domain.exception.BusinessRuleException;
+import org.efrei.argosbackend.domain.exception.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -17,19 +16,14 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(UserNotFoundException.class)
-    public ProblemDetail handleUserNotFound(UserNotFoundException exception) {
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ProblemDetail handleNotFound(ResourceNotFoundException exception) {
         return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, exception.getMessage());
     }
 
-    @ExceptionHandler(StationNotFoundException.class)
-    public ProblemDetail handleStationNotFound(StationNotFoundException exception) {
-        return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, exception.getMessage());
-    }
-
-    @ExceptionHandler(EquipmentNotFoundException.class)
-    public ProblemDetail handleEquipmentNotFound(EquipmentNotFoundException exception) {
-        return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, exception.getMessage());
+    @ExceptionHandler(BusinessRuleException.class)
+    public ProblemDetail handleBusinessRuleViolation(BusinessRuleException exception) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, exception.getMessage());
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
@@ -40,9 +34,9 @@ public class GlobalExceptionHandler {
         );
     }
 
-    @ExceptionHandler(UsernameAlreadyUsedException.class)
-    public ProblemDetail handleUsernameAlreadyUsed(UsernameAlreadyUsedException exception) {
-        return ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, exception.getMessage());
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ProblemDetail handleUnreadableBody(HttpMessageNotReadableException exception) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Le contenu de la requête est illisible ou incomplet.");
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

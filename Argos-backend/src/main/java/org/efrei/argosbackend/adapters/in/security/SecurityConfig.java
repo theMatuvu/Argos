@@ -2,8 +2,10 @@ package org.efrei.argosbackend.adapters.in.security;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.efrei.argosbackend.domain.model.enums.ProfileType;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.Authentication;
@@ -15,8 +17,6 @@ import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
-import org.efrei.argosbackend.domain.model.enums.ProfileType;
-import org.springframework.http.HttpMethod;
 
 @Configuration
 public class SecurityConfig {
@@ -24,15 +24,17 @@ public class SecurityConfig {
     private static final String LOGIN_URL = "/auth/login";
     private static final String LOGOUT_URL = "/auth/logout";
     private static final String SESSION_COOKIE = "JSESSIONID";
+    private static final String OPERATIONS_MANAGER = ProfileType.OPERATIONS_MANAGER.name();
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .authorizeHttpRequests(authorize -> authorize
-                    .requestMatchers("/actuator/health", "/error").permitAll()
-                    .requestMatchers(HttpMethod.POST, "/users").hasRole(ProfileType.OPERATIONS_MANAGER.name())
-                    .anyRequest().authenticated())
-
+                        .requestMatchers("/actuator/health", "/error").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/users").hasRole(OPERATIONS_MANAGER)
+                        .requestMatchers(HttpMethod.PUT, "/incidents/*/provider").hasRole(OPERATIONS_MANAGER)
+                        .requestMatchers(HttpMethod.POST, "/incidents/*/resolution").hasRole(OPERATIONS_MANAGER)
+                        .anyRequest().authenticated())
                 .formLogin(form -> form
                         .loginProcessingUrl(LOGIN_URL)
                         .successHandler(this::respondNoContent)

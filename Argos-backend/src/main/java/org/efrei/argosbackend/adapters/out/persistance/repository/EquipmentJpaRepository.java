@@ -1,7 +1,9 @@
 package org.efrei.argosbackend.adapters.out.persistance.repository;
 
 import org.efrei.argosbackend.adapters.out.persistance.entity.EquipmentEntity;
+import org.efrei.argosbackend.domain.model.enums.OperatingStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
@@ -24,4 +26,8 @@ public interface EquipmentJpaRepository extends JpaRepository<EquipmentEntity, U
             where equipment.id = :equipmentId
             """)
     Optional<EquipmentEntity> findWithStationById(UUID equipmentId);
+
+    @Modifying
+    @Query("update EquipmentEntity equipment set equipment.operatingStatus = :operatingStatus where equipment.id = :equipmentId")
+    void updateOperatingStatus(UUID equipmentId, OperatingStatus operatingStatus);
 }

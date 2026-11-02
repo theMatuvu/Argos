@@ -39,6 +39,22 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'equipments/:equipmentId/declare-incident',
+        title: 'Déclarer un incident · Argos',
+        loadComponent: () =>
+          import('./features/incidents/incident-declare/incident-declare').then(
+            (m) => m.IncidentDeclare,
+          ),
+      },
+      {
+        path: 'incidents/:incidentId',
+        title: "Détail de l'incident · Argos",
+        loadComponent: () =>
+          import('./features/incidents/incident-detail/incident-detail').then(
+            (m) => m.IncidentDetail,
+          ),
+      },
+      {
         path: 'history',
         title: 'Historique · Argos',
         loadComponent: () =>

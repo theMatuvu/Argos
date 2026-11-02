@@ -3,9 +3,17 @@
     ← Équipements de {{ equipment.stationName }}
   </a>
 
-  <header class="page-header">
-    <h1 class="page-title">{{ equipment.label }}</h1>
-    <p class="page-subtitle">{{ typeLabels[equipment.type] }} · {{ equipment.stationName }}</p>
+  <header class="page-header page-header-row">
+    <div>
+      <h1 class="page-title">{{ equipment.label }}</h1>
+      <p class="page-subtitle">{{ typeLabels[equipment.type] }} · {{ equipment.stationName }}</p>
+    </div>
+    <a
+      class="btn btn-primary declare-button"
+      [routerLink]="['/equipments', equipment.id, 'declare-incident']"
+    >
+      Déclarer un incident
+    </a>
   </header>
 
   <div class="sections">
@@ -56,7 +64,9 @@
               @for (incident of equipment.activeIncidents; track incident.id) {
                 <tr>
                   <td class="date">{{ incident.openedAt | date: dateTimeFormat }}</td>
-                  <td>{{ incident.description }}</td>
+                  <td>
+                    <a [routerLink]="['/incidents', incident.id]">{{ incident.description }}</a>
+                  </td>
                   <td>
                     <span class="status-badge" [attr.data-status]="incident.status">
                       {{ incidentStatusLabels[incident.status] }}
@@ -93,7 +103,9 @@
                 <tr>
                   <td class="date">{{ incident.openedAt | date: dateTimeFormat }}</td>
                   <td class="date">{{ incident.resolvedAt | date: dateTimeFormat }}</td>
-                  <td>{{ incident.description }}</td>
+                  <td>
+                    <a [routerLink]="['/incidents', incident.id]">{{ incident.description }}</a>
+                  </td>
                   <td [attr.title]="incident.provider?.contact">
                     {{ incident.provider?.name ?? '—' }}
                   </td>

@@ -1,6 +1,8 @@
 package org.efrei.argosbackend.adapters.out.persistance.mapper;
 
+import org.efrei.argosbackend.adapters.out.persistance.entity.EquipmentEntity;
 import org.efrei.argosbackend.adapters.out.persistance.entity.IncidentEntity;
+import org.efrei.argosbackend.adapters.out.persistance.entity.ProviderEntity;
 import org.efrei.argosbackend.domain.model.Incident;
 import org.efrei.argosbackend.domain.model.Provider;
 import org.springframework.stereotype.Component;
@@ -24,6 +26,17 @@ public class IncidentPersistenceMapper {
                 incident.getOpenedAt(),
                 toDomainProvider(incident),
                 incident.getResolvedAt()
+        );
+    }
+
+    public IncidentEntity toEntity(Incident incident, EquipmentEntity equipment, ProviderEntity provider) {
+        return new IncidentEntity(
+                incident.id(),
+                equipment,
+                incident.description(),
+                incident.openedAt(),
+                provider,
+                incident.resolvedAt()
         );
     }
 

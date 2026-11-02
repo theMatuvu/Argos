@@ -3,6 +3,7 @@ package org.efrei.argosbackend.adapters.out.persistance.adapter;
 import org.efrei.argosbackend.adapters.out.persistance.mapper.EquipmentPersistenceMapper;
 import org.efrei.argosbackend.adapters.out.persistance.repository.EquipmentJpaRepository;
 import org.efrei.argosbackend.domain.model.Equipment;
+import org.efrei.argosbackend.domain.model.enums.OperatingStatus;
 import org.efrei.argosbackend.domain.port.out.EquipmentRepositoryPort;
 import org.springframework.stereotype.Component;
 
@@ -31,5 +32,10 @@ public class EquipmentPersistenceAdapter implements EquipmentRepositoryPort {
     @Override
     public Optional<Equipment> findById(UUID equipmentId) {
         return equipmentJpaRepository.findWithStationById(equipmentId).map(equipmentPersistenceMapper::toDomain);
+    }
+
+    @Override
+    public void updateOperatingStatus(UUID equipmentId, OperatingStatus operatingStatus) {
+        equipmentJpaRepository.updateOperatingStatus(equipmentId, operatingStatus);
     }
 }

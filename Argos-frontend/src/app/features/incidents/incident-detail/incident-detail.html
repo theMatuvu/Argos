@@ -1,0 +1,187 @@
+@if (incident(); as incident) {
+  <a class="back-link" [routerLink]="['/equipments', incident.equipmentId]">
+    ← {{ incident.equipmentLabel }} · {{ incident.stationName }}
+  </a>
+
+  <header class="page-header page-header-row">
+    <div>
+      <h1 class="page-title">Incident sur {{ incident.equipmentLabel }}</h1>
+      <p class="page-subtitle">
+        <span class="reference">{{ incident.equipmentReference }}</span> ·
+        {{ incident.stationName }}
+      </p>
+    </div>
+    <span class="status-badge incident-status" [attr.data-status]="incident.status">
+      {{ statusLabels[incident.status] }}
+    </span>
+  </header>
+
+  <div class="sections">
+    @if (successMessage(); as message) {
+      <p class="alert alert-success" role="status">{{ message }}</p>
+    }
+    @if (actionError(); as message) {
+      <p class="alert alert-error" role="alert">{{ message }}</p>
+    }
+
+    <section class="card">
+      <h2 class="card-title">Informations</h2>
+      <dl class="details-grid">
+        <div>
+          <dt>Équipement</dt>
+          <dd>
+            <a class="reference" [routerLink]="['/equipments', incident.equipmentId]">
+              {{ incident.equipmentReference }}
+            </a>
+            <span class="secondary-text">{{ typeLabels[incident.equipmentType] }}</span>
+          </dd>
+        </div>
+        <div>
+          <dt>Station</dt>
+          <dd>
+            <a routerLink="/equipments" [queryParams]="{ station: incident.stationId }">
+              {{ incident.stationName }}
+            </a>
+          </dd>
+        </div>
+        <div>
+          <dt>Ouvert le</dt>
+          <dd>{{ incident.openedAt | date: dateTimeFormat }}</dd>
+        </div>
+        <div>
+          <dt>{{ incident.resolvedAt ? 'Durée avant résolution' : 'Ouvert depuis' }}</dt>
+          <dd>{{ incident.openDurationMinutes | duration }}</dd>
+        </div>
+        @if (incident.resolvedAt) {
+          <div>
+            <dt>Résolu le</dt>
+            <dd>{{ incident.resolvedAt | date: dateTimeFormat }}</dd>
+          </div>
+        }
+        <div>
+          <dt>Prestataire</dt>
+          <dd>
+            @if (incident.provider; as provider) {
+              {{ provider.name }}
+              <span class="secondary-text">{{ provider.contact }}</span>
+            } @else {
+              Aucun prestataire affecté
+            }
+          </dd>
+        </div>
+        @if (incident.resolvedAt) {
+          <div>
+            <dt>Évaluation</dt>
+            <dd>Aucune évaluation</dd>
+          </div>
+        }
+      </dl>
+    </section>
+
+    <section class="card">
+      <div class="card-heading">
+        <h2 class="card-title">Description</h2>
+        @if (!incident.resolvedAt && !editingDescription()) {
+          <button type="button" class="btn btn-secondary" (click)="startEditing(incident)">
+            Modifier
+          </button>
+        }
+      </div>
+
+      @if (editingDescription()) {
+        <form class="form" [formGroup]="descriptionForm" (ngSubmit)="saveDescription()" novalidate>
+          <div class="form-field">
+            <label class="form-label" for="description">Nouvelle description</label>
+            <textarea id="description" class="input" formControlName="description"></textarea>
+            <p class="field-hint">
+              {{ descriptionForm.controls.description.value.length }} /
+              {{ constraints.maxLength }} caractères
+            </p>
+            @if (descriptionError(); as error) {
+              <p class="field-error">{{ error }}</p>
+            }
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" (click)="cancelEditing()">
+              Annuler
+            </button>
+            <button type="submit" class="btn btn-primary" [disabled]="pending()">
+              Enregistrer
+            </button>
+          </div>
+        </form>
+      } @else {
+        <p class="description">{{ incident.description }}</p>
+      }
+    </section>
+
+    @if (!incident.resolvedAt) {
+      @if (isOperationsManager()) {
+        <section class="card">
+          <h2 class="card-title">Prise en charge</h2>
+
+          <form
+            class="assign-form"
+            [formGroup]="assignmentForm"
+            (ngSubmit)="assignProvider()"
+            novalidate
+          >
+            <div class="form-field">
+              <label class="form-label" for="provider">
+                {{
+                  incident.provider
+                    ? 'Réaffecter à un autre prestataire'
+                    : 'Affecter à un prestataire'
+                }}
+              </label>
+              <select id="provider" class="input" formControlName="providerId">
+                <option value="" disabled>Choisir un prestataire</option>
+                @for (provider of providers(); track provider.id) {
+                  <option [value]="provider.id">{{ provider.name }}</option>
+                }
+              </select>
+              @if (providerError(); as error) {
+                <p class="field-error">{{ error }}</p>
+              }
+            </div>
+            <button type="submit" class="btn btn-primary" [disabled]="pending()">
+              {{ incident.provider ? 'Réaffecter' : 'Affecter' }}
+            </button>
+          </form>
+
+          <div class="resolution">
+            @if (confirmingResolution()) {
+              <p class="resolution-question">
+                Confirmer la résolution ? La date et l'heure actuelles seront enregistrées, et
+                l'incident ne pourra plus être modifié.
+              </p>
+              <button type="button" class="btn btn-secondary" (click)="cancelResolution()">
+                Annuler
+              </button>
+              <button
+                type="button"
+                class="btn btn-primary"
+                [disabled]="pending()"
+                (click)="resolve()"
+              >
+                Confirmer la résolution
+              </button>
+            } @else {
+              <button type="button" class="btn btn-primary" (click)="askResolution()">
+                Déclarer l'incident résolu
+              </button>
+            }
+          </div>
+        </section>
+      } @else {
+        <p class="field-hint">
+          L'affectation d'un prestataire et la résolution sont réservées au responsable
+          d'exploitation.
+        </p>
+      }
+    }
+  </div>
+} @else if (loadError(); as message) {
+  <a class="back-link" routerLink="/history">← Historique des incidents</a>
+  <p class="alert alert-error" role="alert">{{ message }}</p>
+}
