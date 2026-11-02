@@ -1,0 +1,48 @@
+<header class="page-header">
+  <h1 class="page-title">Historique des incidents</h1>
+  <p class="page-subtitle">Incidents résolus, du plus récent au plus ancien.</p>
+</header>
+
+@if (incidents(); as incidents) {
+  <section class="card">
+    <p class="history-count">{{ incidents.length | i18nPlural: countLabels }}</p>
+    @if (incidents.length > 0) {
+      <div class="table-wrapper">
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">Résolu le</th>
+              <th scope="col">Équipement</th>
+              <th scope="col">Station</th>
+              <th scope="col">Description</th>
+              <th scope="col">Prestataire</th>
+              <th scope="col">Durée</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (incident of incidents; track incident.id) {
+              <tr>
+                <td class="date">{{ incident.resolvedAt | date: dateTimeFormat }}</td>
+                <td>
+                  <a class="reference" [routerLink]="['/equipments', incident.equipmentId]">
+                    {{ incident.equipmentReference }}
+                  </a>
+                </td>
+                <td>{{ incident.stationName }}</td>
+                <td>
+                  <a [routerLink]="['/incidents', incident.id]">{{ incident.description }}</a>
+                </td>
+                <td [attr.title]="incident.provider?.contact">
+                  {{ incident.provider?.name ?? '—' }}
+                </td>
+                <td class="date">{{ incident.openDurationMinutes | duration }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </section>
+} @else if (errorMessage(); as message) {
+  <p class="alert alert-error" role="alert">{{ message }}</p>
+}

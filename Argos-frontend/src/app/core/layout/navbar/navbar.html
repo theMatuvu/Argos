@@ -1,0 +1,20 @@
+<header class="navbar">
+  <a class="brand" routerLink="/">
+    <app-logo class="brand-logo" />
+    <span>Argos</span>
+  </a>
+
+  <nav class="nav" aria-label="Navigation principale">
+    @for (link of links(); track link.path) {
+      <a class="nav-link" [routerLink]="link.path" routerLinkActive="is-active">{{ link.label }}</a>
+    }
+  </nav>
+
+  @if (currentUser(); as user) {
+    <div class="session">
+      <span>Bonjour {{ user.firstName }} ({{ profileLabels[user.profile] }})</span>
+      <span class="separator" aria-hidden="true">|</span>
+      <button type="button" class="logout" (click)="logout()">Déconnectez-vous</button>
+    </div>
+  }
+</header>

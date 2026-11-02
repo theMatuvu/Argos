@@ -1,0 +1,33 @@
+.station-picker {
+  max-width: 24rem;
+  margin-bottom: var(--space-5);
+}
+
+.equipment-summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.equipment-count {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.reference {
+  white-space: nowrap;
+}
+
+@media (max-width: 48rem) {
+  .type-column {
+    display: none;
+  }
+
+  .reference {
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+}

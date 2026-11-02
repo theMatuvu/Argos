@@ -1,0 +1,125 @@
+@if (details(); as equipment) {
+  <a class="back-link" routerLink="/equipments" [queryParams]="{ station: equipment.stationId }">
+    ← Équipements de {{ equipment.stationName }}
+  </a>
+
+  <header class="page-header page-header-row">
+    <div>
+      <h1 class="page-title">{{ equipment.label }}</h1>
+      <p class="page-subtitle">{{ typeLabels[equipment.type] }} · {{ equipment.stationName }}</p>
+    </div>
+    <a
+      class="btn btn-primary declare-button"
+      [routerLink]="['/equipments', equipment.id, 'declare-incident']"
+    >
+      Déclarer un incident
+    </a>
+  </header>
+
+  <div class="sections">
+    <section class="card">
+      <h2 class="card-title">Informations</h2>
+      <dl class="details-grid">
+        <div>
+          <dt>Référence</dt>
+          <dd class="reference">{{ equipment.reference }}</dd>
+        </div>
+        <div>
+          <dt>Type</dt>
+          <dd>{{ typeLabels[equipment.type] }}</dd>
+        </div>
+        <div>
+          <dt>Station</dt>
+          <dd>
+            <a routerLink="/equipments" [queryParams]="{ station: equipment.stationId }">
+              {{ equipment.stationName }}
+            </a>
+          </dd>
+        </div>
+        <div>
+          <dt>État de fonctionnement</dt>
+          <dd>
+            <span class="status-badge" [attr.data-status]="equipment.operatingStatus">
+              {{ operatingStatusLabels[equipment.operatingStatus] }}
+            </span>
+          </dd>
+        </div>
+      </dl>
+    </section>
+
+    <section class="card">
+      <h2 class="card-title">Incidents en cours</h2>
+      @if (equipment.activeIncidents.length > 0) {
+        <div class="table-wrapper">
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">Ouvert le</th>
+                <th scope="col">Description</th>
+                <th scope="col">Statut</th>
+                <th scope="col">Prestataire</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (incident of equipment.activeIncidents; track incident.id) {
+                <tr>
+                  <td class="date">{{ incident.openedAt | date: dateTimeFormat }}</td>
+                  <td>
+                    <a [routerLink]="['/incidents', incident.id]">{{ incident.description }}</a>
+                  </td>
+                  <td>
+                    <span class="status-badge" [attr.data-status]="incident.status">
+                      {{ incidentStatusLabels[incident.status] }}
+                    </span>
+                  </td>
+                  <td [attr.title]="incident.provider?.contact">
+                    {{ incident.provider?.name ?? '—' }}
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      } @else {
+        <p class="empty-state">Aucun incident en cours sur cet équipement.</p>
+      }
+    </section>
+
+    <section class="card">
+      <h2 class="card-title">Incidents passés</h2>
+      @if (equipment.pastIncidents.length > 0) {
+        <div class="table-wrapper">
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">Ouvert le</th>
+                <th scope="col">Résolu le</th>
+                <th scope="col">Description</th>
+                <th scope="col">Prestataire</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (incident of equipment.pastIncidents; track incident.id) {
+                <tr>
+                  <td class="date">{{ incident.openedAt | date: dateTimeFormat }}</td>
+                  <td class="date">{{ incident.resolvedAt | date: dateTimeFormat }}</td>
+                  <td>
+                    <a [routerLink]="['/incidents', incident.id]">{{ incident.description }}</a>
+                  </td>
+                  <td [attr.title]="incident.provider?.contact">
+                    {{ incident.provider?.name ?? '—' }}
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      } @else {
+        <p class="empty-state">Aucun incident passé sur cet équipement.</p>
+      }
+    </section>
+  </div>
+} @else if (errorMessage(); as message) {
+  <a class="back-link" routerLink="/equipments">← Équipements</a>
+  <p class="alert alert-error" role="alert">{{ message }}</p>
+}

@@ -1,0 +1,51 @@
+@if (equipment(); as equipment) {
+  <a class="back-link" [routerLink]="['/equipments', equipment.id]">
+    ← {{ equipment.label }} · {{ equipment.stationName }}
+  </a>
+
+  <header class="page-header">
+    <h1 class="page-title">Déclarer un incident</h1>
+    <p class="page-subtitle">
+      <span class="reference">{{ equipment.reference }}</span> · {{ typeLabels[equipment.type] }} ·
+      {{ equipment.stationName }}
+    </p>
+  </header>
+
+  <section class="card card-narrow">
+    <form class="form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <div class="form-field">
+        <label class="form-label" for="description">Description de la panne</label>
+        <textarea
+          id="description"
+          class="input"
+          formControlName="description"
+          placeholder="Exemple : l'escalier s'arrête dès qu'un voyageur monte dessus."
+        ></textarea>
+        <p class="field-hint">
+          {{ form.controls.description.value.length }} / {{ constraints.maxLength }} caractères
+        </p>
+        @if (descriptionError(); as error) {
+          <p class="field-error">{{ error }}</p>
+        }
+      </div>
+
+      <p class="field-hint">
+        L'équipement passera « Hors service » dès la déclaration de l'incident.
+      </p>
+
+      @if (submitError(); as message) {
+        <p class="alert alert-error" role="alert">{{ message }}</p>
+      }
+
+      <div class="form-actions">
+        <a class="btn btn-secondary" [routerLink]="['/equipments', equipment.id]">Annuler</a>
+        <button type="submit" class="btn btn-primary" [disabled]="submitting()">
+          Déclarer l'incident
+        </button>
+      </div>
+    </form>
+  </section>
+} @else if (loadError(); as message) {
+  <a class="back-link" routerLink="/equipments">← Équipements</a>
+  <p class="alert alert-error" role="alert">{{ message }}</p>
+}

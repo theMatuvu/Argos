@@ -1,0 +1,68 @@
+<header class="page-header">
+  <h1 class="page-title">Équipements</h1>
+  <p class="page-subtitle">Équipements de chaque station et leur état de fonctionnement.</p>
+</header>
+
+<section class="card">
+  <div class="form-field station-picker">
+    <label class="form-label" for="station">Station</label>
+    <select id="station" class="input" #stationSelect (change)="selectStation(stationSelect.value)">
+      <option value="" [selected]="!station()">Choisir une station</option>
+      @for (option of stations(); track option.id) {
+        <option [value]="option.id" [selected]="option.id === station()">{{ option.name }}</option>
+      }
+    </select>
+  </div>
+
+  @if (errorMessage(); as message) {
+    <p class="alert alert-error" role="alert">{{ message }}</p>
+  }
+
+  @if (stationEquipments(); as result) {
+    <div class="equipment-summary">
+      <h2 class="card-title">{{ result.station.name }}</h2>
+      <p class="equipment-count">
+        {{ result.equipments.length | i18nPlural: equipmentCountLabels }} ·
+        {{ outOfServiceCount() }} hors service
+      </p>
+    </div>
+
+    <div class="table-wrapper">
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">Référence</th>
+            <th scope="col">Libellé</th>
+            <th scope="col" class="type-column">Type</th>
+            <th scope="col">État</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (equipment of result.equipments; track equipment.id) {
+            <tr>
+              <td class="reference">
+                <a [routerLink]="['/equipments', equipment.id]">{{ equipment.reference }}</a>
+              </td>
+              <td>{{ equipment.label }}</td>
+              <td class="type-column">{{ typeLabels[equipment.type] }}</td>
+              <td>
+                <span class="status-badge" [attr.data-status]="equipment.operatingStatus">
+                  {{ statusLabels[equipment.operatingStatus] }}
+                </span>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td class="table-empty" colspan="4">Aucun équipement dans cette station.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  } @else if (!station()) {
+    <p class="empty-state">
+      Choisissez une station dans la liste, ou cliquez sur une station du plan du réseau depuis le
+      tableau de bord.
+    </p>
+  }
+</section>

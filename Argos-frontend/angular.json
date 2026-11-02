@@ -25,7 +25,11 @@
               }
             ],
             "styles": [
+              "node_modules/leaflet/dist/leaflet.css",
               "src/styles.css"
+            ],
+            "allowedCommonJsDependencies": [
+              "leaflet"
             ]
           },
           "configurations": {
@@ -54,6 +58,9 @@
         },
         "serve": {
           "builder": "@angular/build:dev-server",
+          "options": {
+            "proxyConfig": "proxy.conf.json"
+          },
           "configurations": {
             "production": {
               "buildTarget": "Argos-frontend:build:production"

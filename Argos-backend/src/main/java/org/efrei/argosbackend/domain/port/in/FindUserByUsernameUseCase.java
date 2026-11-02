@@ -1,0 +1,8 @@
+package org.efrei.argosbackend.domain.port.in;
+
+import org.efrei.argosbackend.domain.model.User;
+
+
+public interface FindUserByUsernameUseCase {
+    User findByUsername(String username);
+}
