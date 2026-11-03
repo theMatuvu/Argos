@@ -73,7 +73,11 @@
                     </span>
                   </td>
                   <td [attr.title]="incident.provider?.contact">
-                    {{ incident.provider?.name ?? '—' }}
+                    @if (incident.provider; as provider) {
+                      <a [routerLink]="['/providers', provider.id]">{{ provider.name }}</a>
+                    } @else {
+                      —
+                    }
                   </td>
                 </tr>
               }
@@ -96,6 +100,7 @@
                 <th scope="col">Résolu le</th>
                 <th scope="col">Description</th>
                 <th scope="col">Prestataire</th>
+                <th scope="col">Note</th>
               </tr>
             </thead>
             <tbody>
@@ -107,7 +112,18 @@
                     <a [routerLink]="['/incidents', incident.id]">{{ incident.description }}</a>
                   </td>
                   <td [attr.title]="incident.provider?.contact">
-                    {{ incident.provider?.name ?? '—' }}
+                    @if (incident.provider; as provider) {
+                      <a [routerLink]="['/providers', provider.id]">{{ provider.name }}</a>
+                    } @else {
+                      —
+                    }
+                  </td>
+                  <td>
+                    @if (incident.rating !== null) {
+                      <app-rating-stars [value]="incident.rating" />
+                    } @else {
+                      —
+                    }
                   </td>
                 </tr>
               }

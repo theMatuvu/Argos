@@ -13,6 +13,8 @@ public interface IncidentRepositoryPort {
 
     List<Incident> findAllResolved();
 
+    List<Incident> findAllResolvedByProviderId(UUID providerId);
+
     boolean existsActiveByEquipmentId(UUID equipmentId);
 
     Incident save(Incident incident);

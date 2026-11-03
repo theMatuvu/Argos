@@ -10,6 +10,7 @@ export interface Incident {
   status: IncidentStatus;
   provider: Provider | null;
   resolvedAt: string | null;
+  rating: number | null;
 }
 
 export interface IncidentDetails {
@@ -19,6 +20,7 @@ export interface IncidentDetails {
   openedAt: string;
   resolvedAt: string | null;
   openDurationMinutes: number;
+  rating: number | null;
   provider: Provider | null;
   equipmentId: string;
   equipmentReference: string;

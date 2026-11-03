@@ -13,6 +13,7 @@ public record IncidentDetailsResponse(
         LocalDateTime openedAt,
         LocalDateTime resolvedAt,
         long openDurationMinutes,
+        Integer rating,
         ProviderResponse provider,
         UUID equipmentId,
         String equipmentReference,

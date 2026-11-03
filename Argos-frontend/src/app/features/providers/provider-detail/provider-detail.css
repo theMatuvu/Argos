@@ -1,0 +1,8 @@
+.rating-cell {
+  white-space: nowrap;
+}
+
+.not-rated {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}

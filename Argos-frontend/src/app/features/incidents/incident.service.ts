@@ -40,4 +40,10 @@ export class IncidentService {
       null,
     );
   }
+
+  evaluate(incidentId: string, rating: number): Observable<IncidentDetails> {
+    return this.http.post<IncidentDetails>(`${API_BASE_URL}/incidents/${incidentId}/evaluation`, {
+      rating,
+    });
+  }
 }

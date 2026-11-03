@@ -47,6 +47,11 @@ public class IncidentPersistenceAdapter implements IncidentRepositoryPort {
     }
 
     @Override
+    public List<Incident> findAllResolvedByProviderId(UUID providerId) {
+        return toDomain(incidentJpaRepository.findAllResolvedByProviderId(providerId));
+    }
+
+    @Override
     public boolean existsActiveByEquipmentId(UUID equipmentId) {
         return incidentJpaRepository.existsByEquipmentIdAndResolvedAtIsNull(equipmentId);
     }

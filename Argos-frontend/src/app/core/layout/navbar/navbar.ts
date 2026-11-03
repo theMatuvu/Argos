@@ -14,6 +14,7 @@ const NAV_LINKS: NavLink[] = [
   { path: '/dashboard', label: 'Tableau de bord' },
   { path: '/equipments', label: 'Équipements' },
   { path: '/history', label: 'Historique' },
+  { path: '/providers', label: 'Prestataires' },
   { path: '/users', label: 'Comptes', requiredProfile: 'OPERATIONS_MANAGER' },
 ];
 

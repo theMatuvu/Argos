@@ -63,6 +63,20 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'providers',
+        title: 'Prestataires · Argos',
+        loadComponent: () =>
+          import('./features/providers/provider-list/provider-list').then((m) => m.ProviderList),
+      },
+      {
+        path: 'providers/:providerId',
+        title: 'Fiche prestataire · Argos',
+        loadComponent: () =>
+          import('./features/providers/provider-detail/provider-detail').then(
+            (m) => m.ProviderDetail,
+          ),
+      },
+      {
         path: 'users',
         title: 'Comptes · Argos',
         canActivate: [roleGuard('OPERATIONS_MANAGER')],

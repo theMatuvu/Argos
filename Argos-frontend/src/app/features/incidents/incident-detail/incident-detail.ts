@@ -11,7 +11,9 @@ import { DATE_TIME_FORMAT } from '../../../shared/date-format';
 import { DurationPipe } from '../../../shared/duration.pipe';
 import { visibleError } from '../../../shared/forms/form-errors';
 import { EQUIPMENT_TYPE_LABELS } from '../../equipments/equipment.model';
+import { RATING_SCALE, RATING_VALUES } from '../../providers/provider.model';
 import { ProviderService } from '../../providers/provider.service';
+import { RatingStars } from '../../providers/rating-stars/rating-stars';
 import {
   INCIDENT_DESCRIPTION_CONSTRAINTS,
   INCIDENT_DESCRIPTION_ERROR,
@@ -21,10 +23,11 @@ import {
 import { IncidentService } from '../incident.service';
 
 const PROVIDER_REQUIRED_ERROR = 'Choisissez un prestataire.';
+const RATING_REQUIRED_ERROR = 'Choisissez une note.';
 
 @Component({
   selector: 'app-incident-detail',
-  imports: [DatePipe, DurationPipe, ReactiveFormsModule, RouterLink],
+  imports: [DatePipe, DurationPipe, RatingStars, ReactiveFormsModule, RouterLink],
   templateUrl: './incident-detail.html',
   styleUrl: './incident-detail.css',
 })
@@ -40,6 +43,8 @@ export class IncidentDetail {
   protected readonly statusLabels = INCIDENT_STATUS_LABELS;
   protected readonly typeLabels = EQUIPMENT_TYPE_LABELS;
   protected readonly constraints = INCIDENT_DESCRIPTION_CONSTRAINTS;
+  protected readonly ratingScale = RATING_SCALE;
+  protected readonly ratingValues = RATING_VALUES;
   protected readonly isOperationsManager = computed(
     () => this.auth.currentUser()?.profile === 'OPERATIONS_MANAGER',
   );
@@ -67,6 +72,10 @@ export class IncidentDetail {
     providerId: ['', Validators.required],
   });
 
+  protected readonly evaluationForm = this.formBuilder.group({
+    rating: this.formBuilder.control<number | null>(null, Validators.required),
+  });
+
   private readonly loadedIncident = toSignal(
     toObservable(this.incidentId).pipe(switchMap((incidentId) => this.load(incidentId))),
     { initialValue: null },
@@ -79,6 +88,14 @@ export class IncidentDetail {
 
   protected providerError(): string | null {
     return visibleError(this.assignmentForm.controls.providerId, PROVIDER_REQUIRED_ERROR);
+  }
+
+  protected ratingError(): string | null {
+    return visibleError(this.evaluationForm.controls.rating, RATING_REQUIRED_ERROR);
+  }
+
+  protected canBeEvaluated(incident: IncidentDetails): boolean {
+    return incident.resolvedAt !== null && incident.provider !== null && incident.rating === null;
   }
 
   protected startEditing(incident: IncidentDetails): void {
@@ -130,6 +147,18 @@ export class IncidentDetail {
     this.run(this.incidentService.resolve(this.incidentId()), "L'incident a été déclaré résolu.");
   }
 
+  protected evaluate(): void {
+    const { rating } = this.evaluationForm.getRawValue();
+    if (this.evaluationForm.invalid || rating === null) {
+      this.evaluationForm.markAllAsTouched();
+      return;
+    }
+    this.run(
+      this.incidentService.evaluate(this.incidentId(), rating),
+      "L'évaluation de l'intervention a été enregistrée.",
+    );
+  }
+
   private run(request: Observable<IncidentDetails>, successMessage: string): void {
     this.pending.set(true);
     this.actionError.set(null);
@@ -146,6 +175,7 @@ export class IncidentDetail {
     this.editingDescription.set(false);
     this.confirmingResolution.set(false);
     this.assignmentForm.reset();
+    this.evaluationForm.reset();
     this.pending.set(false);
   }
 

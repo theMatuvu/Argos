@@ -75,3 +75,11 @@ INSERT INTO incidents (id, equipment_id, description, opened_at, provider_id, re
      'Portique bloqué en position ouverte.',
      NOW() - INTERVAL 2 DAY, (SELECT id FROM providers WHERE name = 'Billettique Express'),
      NOW() - INTERVAL 1 DAY);
+
+UPDATE incidents SET rating = 4 WHERE description = 'Marche endommagée en bas de l''escalier.';
+UPDATE incidents SET rating = 3 WHERE description = 'Escalier arrêté, capteur de sécurité défectueux.';
+UPDATE incidents SET rating = 5 WHERE description = 'Bouton d''appel du quai hors service.';
+UPDATE incidents SET rating = 4 WHERE description = 'Porte palière qui se rouvre en boucle.';
+UPDATE incidents SET rating = 2 WHERE description = 'Portique qui laisse passer sans validation.';
+UPDATE incidents SET rating = 3 WHERE description = 'Imprimante de tickets en panne.';
+UPDATE incidents SET rating = 5 WHERE description = 'Écran affichant des horaires erronés.';

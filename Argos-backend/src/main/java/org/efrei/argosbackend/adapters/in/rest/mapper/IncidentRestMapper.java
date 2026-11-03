@@ -27,7 +27,8 @@ public class IncidentRestMapper {
                 incident.openedAt(),
                 incident.status(),
                 providerRestMapper.toResponse(incident.provider()),
-                incident.resolvedAt()
+                incident.resolvedAt(),
+                ratingValue(incident)
         );
     }
 
@@ -41,6 +42,7 @@ public class IncidentRestMapper {
                 incident.openedAt(),
                 incident.resolvedAt(),
                 details.openDuration().toMinutes(),
+                ratingValue(incident),
                 providerRestMapper.toResponse(incident.provider()),
                 equipment.id(),
                 equipment.reference(),
@@ -53,5 +55,9 @@ public class IncidentRestMapper {
 
     public DeclareIncidentCommand toCommand(UUID equipmentId, IncidentDescriptionRequest request) {
         return new DeclareIncidentCommand(equipmentId, request.description());
+    }
+
+    private Integer ratingValue(Incident incident) {
+        return incident.isEvaluated() ? incident.rating().value() : null;
     }
 }

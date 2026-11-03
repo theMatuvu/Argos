@@ -62,7 +62,7 @@
           <dt>Prestataire</dt>
           <dd>
             @if (incident.provider; as provider) {
-              {{ provider.name }}
+              <a [routerLink]="['/providers', provider.id]">{{ provider.name }}</a>
               <span class="secondary-text">{{ provider.contact }}</span>
             } @else {
               Aucun prestataire affecté
@@ -72,7 +72,15 @@
         @if (incident.resolvedAt) {
           <div>
             <dt>Évaluation</dt>
-            <dd>Aucune évaluation</dd>
+            <dd>
+              @if (incident.rating !== null) {
+                <app-rating-stars [value]="incident.rating" />
+              } @else if (incident.provider) {
+                Aucune évaluation
+              } @else {
+                Aucun prestataire à évaluer
+              }
+            </dd>
           </div>
         }
       </dl>
@@ -177,6 +185,44 @@
         <p class="field-hint">
           L'affectation d'un prestataire et la résolution sont réservées au responsable
           d'exploitation.
+        </p>
+      }
+    }
+
+    @if (canBeEvaluated(incident)) {
+      @if (isOperationsManager()) {
+        <section class="card">
+          <h2 class="card-title">Évaluation de l'intervention</h2>
+
+          <form
+            class="evaluation-form"
+            [formGroup]="evaluationForm"
+            (ngSubmit)="evaluate()"
+            novalidate
+          >
+            <div class="form-field">
+              <label class="form-label" for="rating">
+                Note de l'intervention de {{ incident.provider?.name }}
+              </label>
+              <select id="rating" class="input" formControlName="rating">
+                <option [ngValue]="null" disabled>Choisir une note</option>
+                @for (value of ratingValues; track value) {
+                  <option [ngValue]="value">{{ value }} / {{ ratingScale.max }}</option>
+                }
+              </select>
+              @if (ratingError(); as error) {
+                <p class="field-error">{{ error }}</p>
+              }
+            </div>
+            <button type="submit" class="btn btn-primary" [disabled]="pending()">
+              Enregistrer la note
+            </button>
+          </form>
+          <p class="field-hint">Une fois enregistrée, la note ne pourra plus être modifiée.</p>
+        </section>
+      } @else {
+        <p class="field-hint">
+          L'évaluation du prestataire est réservée au responsable d'exploitation.
         </p>
       }
     }

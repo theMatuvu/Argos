@@ -1,6 +1,9 @@
 package org.efrei.argosbackend.domain.model;
 
+import org.efrei.argosbackend.domain.exception.IncidentAlreadyEvaluatedException;
 import org.efrei.argosbackend.domain.exception.IncidentAlreadyResolvedException;
+import org.efrei.argosbackend.domain.exception.IncidentNotResolvedException;
+import org.efrei.argosbackend.domain.exception.IncidentWithoutProviderException;
 import org.efrei.argosbackend.domain.exception.InvalidResolutionDateException;
 import org.efrei.argosbackend.domain.model.enums.IncidentStatus;
 
@@ -14,7 +17,8 @@ public record Incident(
         String description,
         LocalDateTime openedAt,
         Provider provider,
-        LocalDateTime resolvedAt
+        LocalDateTime resolvedAt,
+        Rating rating
 ) {
 
     public static final int DESCRIPTION_MIN_LENGTH = 10;
@@ -27,11 +31,15 @@ public record Incident(
     }
 
     public static Incident declare(Equipment equipment, String description, LocalDateTime openedAt) {
-        return new Incident(null, equipment, description, openedAt, null, null);
+        return new Incident(null, equipment, description, openedAt, null, null, null);
     }
 
     public boolean isResolved() {
         return resolvedAt != null;
+    }
+
+    public boolean isEvaluated() {
+        return rating != null;
     }
 
     public IncidentStatus status() {
@@ -46,27 +54,44 @@ public record Incident(
     }
 
     public Incident withId(UUID persistedId) {
-        return new Incident(persistedId, equipment, description, openedAt, provider, resolvedAt);
+        return new Incident(persistedId, equipment, description, openedAt, provider, resolvedAt, rating);
     }
 
     public Incident withDescription(String newDescription) {
         ensureNotResolved();
-        return new Incident(id, equipment, newDescription, openedAt, provider, resolvedAt);
+        return new Incident(id, equipment, newDescription, openedAt, provider, resolvedAt, rating);
     }
 
     public Incident assignTo(Provider newProvider) {
         ensureNotResolved();
-        return new Incident(id, equipment, description, openedAt, newProvider, resolvedAt);
+        return new Incident(id, equipment, description, openedAt, newProvider, resolvedAt, rating);
     }
 
     public Incident resolve(LocalDateTime resolutionTime) {
         ensureNotResolved();
-        return new Incident(id, equipment, description, openedAt, provider, resolutionTime);
+        return new Incident(id, equipment, description, openedAt, provider, resolutionTime, rating);
+    }
+
+    public Incident evaluate(Rating newRating) {
+        ensureEvaluable();
+        return new Incident(id, equipment, description, openedAt, provider, resolvedAt, newRating);
     }
 
     private void ensureNotResolved() {
         if (isResolved()) {
             throw new IncidentAlreadyResolvedException(id);
+        }
+    }
+
+    private void ensureEvaluable() {
+        if (!isResolved()) {
+            throw new IncidentNotResolvedException(id);
+        }
+        if (provider == null) {
+            throw new IncidentWithoutProviderException(id);
+        }
+        if (isEvaluated()) {
+            throw new IncidentAlreadyEvaluatedException(id);
         }
     }
 }
