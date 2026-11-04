@@ -35,6 +35,11 @@ public class EquipmentPersistenceAdapter implements EquipmentRepositoryPort {
     }
 
     @Override
+    public long countByOperatingStatus(OperatingStatus operatingStatus) {
+        return equipmentJpaRepository.countByOperatingStatus(operatingStatus);
+    }
+
+    @Override
     public void updateOperatingStatus(UUID equipmentId, OperatingStatus operatingStatus) {
         equipmentJpaRepository.updateOperatingStatus(equipmentId, operatingStatus);
     }

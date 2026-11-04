@@ -1,5 +1,6 @@
 package org.efrei.argosbackend.adapters.in.rest.dto.response;
 
+import org.efrei.argosbackend.domain.model.enums.AttentionLevel;
 import org.efrei.argosbackend.domain.model.enums.EquipmentType;
 import org.efrei.argosbackend.domain.model.enums.IncidentStatus;
 
@@ -10,6 +11,7 @@ public record IncidentDetailsResponse(
         UUID id,
         String description,
         IncidentStatus status,
+        AttentionLevel attentionLevel,
         LocalDateTime openedAt,
         LocalDateTime resolvedAt,
         long openDurationMinutes,

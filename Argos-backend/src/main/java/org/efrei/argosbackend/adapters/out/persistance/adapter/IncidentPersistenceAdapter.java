@@ -42,6 +42,11 @@ public class IncidentPersistenceAdapter implements IncidentRepositoryPort {
     }
 
     @Override
+    public List<Incident> findAllActive() {
+        return toDomain(incidentJpaRepository.findAllActive());
+    }
+
+    @Override
     public List<Incident> findAllResolved() {
         return toDomain(incidentJpaRepository.findAllResolved());
     }

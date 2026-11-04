@@ -33,6 +33,15 @@ public interface IncidentJpaRepository extends JpaRepository<IncidentEntity, UUI
             join fetch incident.equipment equipment
             join fetch equipment.station
             left join fetch incident.provider
+            where incident.resolvedAt is null
+            """)
+    List<IncidentEntity> findAllActive();
+
+    @Query("""
+            select incident from IncidentEntity incident
+            join fetch incident.equipment equipment
+            join fetch equipment.station
+            left join fetch incident.provider
             where incident.resolvedAt is not null
             """)
     List<IncidentEntity> findAllResolved();

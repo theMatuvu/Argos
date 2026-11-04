@@ -15,6 +15,7 @@ import { RATING_SCALE, RATING_VALUES } from '../../providers/provider.model';
 import { ProviderService } from '../../providers/provider.service';
 import { RatingStars } from '../../providers/rating-stars/rating-stars';
 import {
+  ATTENTION_LEVEL_LABELS,
   INCIDENT_DESCRIPTION_CONSTRAINTS,
   INCIDENT_DESCRIPTION_ERROR,
   INCIDENT_STATUS_LABELS,
@@ -41,6 +42,7 @@ export class IncidentDetail {
 
   protected readonly dateTimeFormat = DATE_TIME_FORMAT;
   protected readonly statusLabels = INCIDENT_STATUS_LABELS;
+  protected readonly attentionLabels = ATTENTION_LEVEL_LABELS;
   protected readonly typeLabels = EQUIPMENT_TYPE_LABELS;
   protected readonly constraints = INCIDENT_DESCRIPTION_CONSTRAINTS;
   protected readonly ratingScale = RATING_SCALE;

@@ -5,6 +5,7 @@ import org.efrei.argosbackend.domain.exception.IncidentAlreadyResolvedException;
 import org.efrei.argosbackend.domain.exception.IncidentNotResolvedException;
 import org.efrei.argosbackend.domain.exception.IncidentWithoutProviderException;
 import org.efrei.argosbackend.domain.exception.InvalidResolutionDateException;
+import org.efrei.argosbackend.domain.model.enums.AttentionLevel;
 import org.efrei.argosbackend.domain.model.enums.IncidentStatus;
 
 import java.time.Duration;
@@ -23,6 +24,8 @@ public record Incident(
 
     public static final int DESCRIPTION_MIN_LENGTH = 10;
     public static final int DESCRIPTION_MAX_LENGTH = 500;
+    public static final Duration ORANGE_ATTENTION_THRESHOLD = Duration.ofHours(48);
+    public static final Duration RED_ATTENTION_THRESHOLD = Duration.ofHours(72);
 
     public Incident {
         if (resolvedAt != null && resolvedAt.isBefore(openedAt)) {
@@ -42,6 +45,10 @@ public record Incident(
         return rating != null;
     }
 
+    public boolean isAwaitingEvaluation() {
+        return isResolved() && provider != null && !isEvaluated();
+    }
+
     public IncidentStatus status() {
         if (isResolved()) {
             return IncidentStatus.RESOLVED;
@@ -51,6 +58,20 @@ public record Incident(
 
     public Duration openDuration(LocalDateTime now) {
         return Duration.between(openedAt, isResolved() ? resolvedAt : now);
+    }
+
+    public AttentionLevel attentionLevel(LocalDateTime now) {
+        if (provider != null) {
+            return AttentionLevel.ASSIGNED;
+        }
+        Duration openDuration = openDuration(now);
+        if (openDuration.compareTo(RED_ATTENTION_THRESHOLD) >= 0) {
+            return AttentionLevel.RED;
+        }
+        if (openDuration.compareTo(ORANGE_ATTENTION_THRESHOLD) >= 0) {
+            return AttentionLevel.ORANGE;
+        }
+        return AttentionLevel.GREEN;
     }
 
     public Incident withId(UUID persistedId) {

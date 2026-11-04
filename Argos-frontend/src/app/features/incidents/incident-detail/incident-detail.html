@@ -44,6 +44,16 @@
             </a>
           </dd>
         </div>
+        @if (incident.attentionLevel; as attentionLevel) {
+          <div>
+            <dt>Niveau d'attention</dt>
+            <dd>
+              <span class="status-badge" [attr.data-status]="attentionLevel">
+                {{ attentionLabels[attentionLevel] }}
+              </span>
+            </dd>
+          </div>
+        }
         <div>
           <dt>Ouvert le</dt>
           <dd>{{ incident.openedAt | date: dateTimeFormat }}</dd>

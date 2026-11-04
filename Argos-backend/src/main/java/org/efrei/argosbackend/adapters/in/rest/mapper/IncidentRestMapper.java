@@ -39,6 +39,7 @@ public class IncidentRestMapper {
                 incident.id(),
                 incident.description(),
                 incident.status(),
+                details.attentionLevel(),
                 incident.openedAt(),
                 incident.resolvedAt(),
                 details.openDuration().toMinutes(),
