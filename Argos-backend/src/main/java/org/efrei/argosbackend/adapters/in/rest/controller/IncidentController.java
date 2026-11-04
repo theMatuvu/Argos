@@ -2,11 +2,13 @@ package org.efrei.argosbackend.adapters.in.rest.controller;
 
 import jakarta.validation.Valid;
 import org.efrei.argosbackend.adapters.in.rest.dto.request.AssignProviderRequest;
+import org.efrei.argosbackend.adapters.in.rest.dto.request.EvaluateIncidentRequest;
 import org.efrei.argosbackend.adapters.in.rest.dto.request.IncidentDescriptionRequest;
 import org.efrei.argosbackend.adapters.in.rest.dto.response.IncidentDetailsResponse;
 import org.efrei.argosbackend.adapters.in.rest.mapper.IncidentRestMapper;
 import org.efrei.argosbackend.domain.port.in.AssignProviderUseCase;
 import org.efrei.argosbackend.domain.port.in.DeclareIncidentUseCase;
+import org.efrei.argosbackend.domain.port.in.EvaluateIncidentUseCase;
 import org.efrei.argosbackend.domain.port.in.FindIncidentDetailsUseCase;
 import org.efrei.argosbackend.domain.port.in.ListResolvedIncidentsUseCase;
 import org.efrei.argosbackend.domain.port.in.ResolveIncidentUseCase;
@@ -33,18 +35,20 @@ public class IncidentController {
     private final AssignProviderUseCase assignProvider;
     private final ResolveIncidentUseCase resolveIncident;
     private final ListResolvedIncidentsUseCase listResolvedIncidents;
+    private final EvaluateIncidentUseCase evaluateIncident;
     private final IncidentRestMapper incidentRestMapper;
 
     public IncidentController(DeclareIncidentUseCase declareIncident, FindIncidentDetailsUseCase findIncidentDetails,
                               UpdateIncidentDescriptionUseCase updateIncidentDescription, AssignProviderUseCase assignProvider,
                               ResolveIncidentUseCase resolveIncident, ListResolvedIncidentsUseCase listResolvedIncidents,
-                              IncidentRestMapper incidentRestMapper) {
+                              EvaluateIncidentUseCase evaluateIncident, IncidentRestMapper incidentRestMapper) {
         this.declareIncident = declareIncident;
         this.findIncidentDetails = findIncidentDetails;
         this.updateIncidentDescription = updateIncidentDescription;
         this.assignProvider = assignProvider;
         this.resolveIncident = resolveIncident;
         this.listResolvedIncidents = listResolvedIncidents;
+        this.evaluateIncident = evaluateIncident;
         this.incidentRestMapper = incidentRestMapper;
     }
 
@@ -77,5 +81,10 @@ public class IncidentController {
     @PostMapping("/incidents/{incidentId}/resolution")
     public IncidentDetailsResponse resolve(@PathVariable UUID incidentId) {
         return incidentRestMapper.toResponse(resolveIncident.resolve(incidentId));
+    }
+
+    @PostMapping("/incidents/{incidentId}/evaluation")
+    public IncidentDetailsResponse evaluate(@PathVariable UUID incidentId, @RequestBody @Valid EvaluateIncidentRequest request) {
+        return incidentRestMapper.toResponse(evaluateIncident.evaluate(incidentId, request.rating()));
     }
 }

@@ -1,0 +1,6 @@
+<span class="stars" aria-hidden="true">
+  @for (filled of stars(); track $index) {
+    <span class="star" [class.is-filled]="filled">★</span>
+  }
+</span>
+<span class="rating-value">{{ formattedValue() }} / {{ maxValue }}</span>

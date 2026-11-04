@@ -12,5 +12,7 @@ public interface EquipmentRepositoryPort {
 
     Optional<Equipment> findById(UUID equipmentId);
 
+    long countByOperatingStatus(OperatingStatus operatingStatus);
+
     void updateOperatingStatus(UUID equipmentId, OperatingStatus operatingStatus);
 }

@@ -1,0 +1,45 @@
+<header class="page-header">
+  <h1 class="page-title">Prestataires</h1>
+  <p class="page-subtitle">Prestataires de maintenance et note moyenne de leurs interventions.</p>
+</header>
+
+@if (providers(); as providers) {
+  <section class="card">
+    <div class="table-wrapper">
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">Prestataire</th>
+            <th scope="col">Contact</th>
+            <th scope="col">Note moyenne</th>
+            <th scope="col">Évaluations</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (provider of providers; track provider.id) {
+            <tr>
+              <td>
+                <a [routerLink]="['/providers', provider.id]">{{ provider.name }}</a>
+              </td>
+              <td>{{ provider.contact }}</td>
+              <td>
+                @if (provider.averageRating !== null) {
+                  <app-rating-stars [value]="provider.averageRating" />
+                } @else {
+                  —
+                }
+              </td>
+              <td>{{ provider.evaluationCount | i18nPlural: evaluationCountLabels }}</td>
+            </tr>
+          } @empty {
+            <tr>
+              <td class="table-empty" colspan="4">Aucun prestataire enregistré.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+} @else if (errorMessage(); as message) {
+  <p class="alert alert-error" role="alert">{{ message }}</p>
+}

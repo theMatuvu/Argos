@@ -11,7 +11,11 @@ public interface IncidentRepositoryPort {
 
     Optional<Incident> findById(UUID incidentId);
 
+    List<Incident> findAllActive();
+
     List<Incident> findAllResolved();
+
+    List<Incident> findAllResolvedByProviderId(UUID providerId);
 
     boolean existsActiveByEquipmentId(UUID equipmentId);
 

@@ -1,0 +1,130 @@
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--space-5);
+  align-items: start;
+}
+
+.indicators {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(7rem, 1fr));
+  gap: var(--space-3);
+  margin: 0 0 var(--space-5);
+}
+
+.indicator {
+  padding: var(--space-3);
+  background: var(--color-background);
+  border-radius: var(--radius-md);
+}
+
+.indicator dt {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.indicator dd {
+  margin: var(--space-1) 0 0;
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+}
+
+.tracking-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-bottom: var(--space-5);
+}
+
+.tracking-filters .form-field {
+  flex: 1 1 12rem;
+}
+
+.tracking-groups {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.group-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0 0 var(--space-2);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-medium);
+}
+
+.group-count {
+  padding: 0 var(--space-2);
+  border-radius: var(--radius-pill);
+  background: var(--color-background);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.incident-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.incident-list .empty-state {
+  font-size: var(--font-size-sm);
+}
+
+.incident-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--color-border);
+  color: inherit;
+  text-decoration: none;
+}
+
+.incident-item:hover {
+  background: var(--color-background);
+}
+
+.incident-item .status-badge {
+  flex: none;
+  min-width: 7.5rem;
+  text-align: center;
+}
+
+.incident-summary {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.incident-equipment {
+  font-weight: var(--font-weight-medium);
+}
+
+.incident-meta {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  overflow-wrap: anywhere;
+}
+
+.incident-age {
+  flex: none;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+@media (max-width: 64rem) {
+  .dashboard-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 30rem) {
+  .incident-item {
+    flex-wrap: wrap;
+  }
+}

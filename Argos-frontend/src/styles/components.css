@@ -278,6 +278,21 @@ textarea.input {
   color: var(--color-danger);
 }
 
+.status-badge[data-status='GREEN'] {
+  background: var(--color-attention-green-soft);
+  color: var(--color-attention-green);
+}
+
+.status-badge[data-status='ORANGE'] {
+  background: var(--color-attention-orange-soft);
+  color: var(--color-attention-orange);
+}
+
+.status-badge[data-status='RED'] {
+  background: var(--color-attention-red-soft);
+  color: var(--color-attention-red);
+}
+
 .status-badge[data-status='UNASSIGNED'] {
   background: var(--color-attention-orange-soft);
   color: var(--color-attention-orange);

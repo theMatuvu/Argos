@@ -7,6 +7,7 @@ import { Observable, catchError, of, switchMap } from 'rxjs';
 import { apiErrorMessage } from '../../../core/http/api-error';
 import { DATE_TIME_FORMAT } from '../../../shared/date-format';
 import { INCIDENT_STATUS_LABELS } from '../../incidents/incident.model';
+import { RatingStars } from '../../providers/rating-stars/rating-stars';
 import {
   EQUIPMENT_TYPE_LABELS,
   EquipmentDetails,
@@ -16,7 +17,7 @@ import { EquipmentService } from '../equipment.service';
 
 @Component({
   selector: 'app-equipment-detail',
-  imports: [DatePipe, RouterLink],
+  imports: [DatePipe, RatingStars, RouterLink],
   templateUrl: './equipment-detail.html',
   styleUrl: './equipment-detail.css',
 })

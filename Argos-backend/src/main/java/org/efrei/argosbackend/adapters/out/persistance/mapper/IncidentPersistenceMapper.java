@@ -5,6 +5,7 @@ import org.efrei.argosbackend.adapters.out.persistance.entity.IncidentEntity;
 import org.efrei.argosbackend.adapters.out.persistance.entity.ProviderEntity;
 import org.efrei.argosbackend.domain.model.Incident;
 import org.efrei.argosbackend.domain.model.Provider;
+import org.efrei.argosbackend.domain.model.Rating;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -25,7 +26,8 @@ public class IncidentPersistenceMapper {
                 incident.getDescription(),
                 incident.getOpenedAt(),
                 toDomainProvider(incident),
-                incident.getResolvedAt()
+                incident.getResolvedAt(),
+                toDomainRating(incident)
         );
     }
 
@@ -36,8 +38,13 @@ public class IncidentPersistenceMapper {
                 incident.description(),
                 incident.openedAt(),
                 provider,
-                incident.resolvedAt()
+                incident.resolvedAt(),
+                incident.isEvaluated() ? incident.rating().value() : null
         );
+    }
+
+    private Rating toDomainRating(IncidentEntity incident) {
+        return incident.getRating() == null ? null : new Rating(incident.getRating());
     }
 
     private Provider toDomainProvider(IncidentEntity incident) {

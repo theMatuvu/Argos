@@ -1,0 +1,83 @@
+@if (details(); as provider) {
+  <a class="back-link" routerLink="/providers">← Prestataires</a>
+
+  <header class="page-header">
+    <h1 class="page-title">{{ provider.name }}</h1>
+    <p class="page-subtitle">{{ provider.contact }}</p>
+  </header>
+
+  <div class="sections">
+    <section class="card">
+      <h2 class="card-title">Évaluation</h2>
+      <dl class="details-grid">
+        <div>
+          <dt>Note moyenne</dt>
+          <dd>
+            @if (provider.averageRating !== null) {
+              <app-rating-stars [value]="provider.averageRating" />
+            } @else {
+              Pas encore évalué
+            }
+          </dd>
+        </div>
+        <div>
+          <dt>Évaluations</dt>
+          <dd>{{ provider.evaluationCount | i18nPlural: evaluationCountLabels }}</dd>
+        </div>
+        <div>
+          <dt>Interventions</dt>
+          <dd>{{ provider.resolvedIncidents.length | i18nPlural: resolvedCountLabels }}</dd>
+        </div>
+      </dl>
+    </section>
+
+    <section class="card">
+      <h2 class="card-title">Incidents résolus</h2>
+      @if (provider.resolvedIncidents.length > 0) {
+        <div class="table-wrapper">
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">Résolu le</th>
+                <th scope="col">Équipement</th>
+                <th scope="col">Station</th>
+                <th scope="col">Description</th>
+                <th scope="col">Durée</th>
+                <th scope="col">Note</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (incident of provider.resolvedIncidents; track incident.id) {
+                <tr>
+                  <td class="date">{{ incident.resolvedAt | date: dateTimeFormat }}</td>
+                  <td>
+                    <a class="reference" [routerLink]="['/equipments', incident.equipmentId]">
+                      {{ incident.equipmentReference }}
+                    </a>
+                  </td>
+                  <td>{{ incident.stationName }}</td>
+                  <td>
+                    <a [routerLink]="['/incidents', incident.id]">{{ incident.description }}</a>
+                  </td>
+                  <td class="date">{{ incident.openDurationMinutes | duration }}</td>
+                  <td class="rating-cell">
+                    @if (incident.rating !== null) {
+                      <app-rating-stars [value]="incident.rating" />
+                    } @else {
+                      <span class="not-rated">Non évalué</span>
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      } @else {
+        <p class="empty-state">Ce prestataire n'a encore résolu aucun incident.</p>
+      }
+    </section>
+  </div>
+} @else if (errorMessage(); as message) {
+  <a class="back-link" routerLink="/providers">← Prestataires</a>
+  <p class="alert alert-error" role="alert">{{ message }}</p>
+}

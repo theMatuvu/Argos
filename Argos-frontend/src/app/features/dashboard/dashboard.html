@@ -3,7 +3,148 @@
   <p class="page-subtitle">Incidents actifs et niveau d'attention de chacun.</p>
 </header>
 
-<section class="card">
-  <h2 class="card-title">Plan du réseau</h2>
-  <app-network-map />
-</section>
+<div class="dashboard-grid">
+  <section class="card">
+    <h2 class="card-title">Plan du réseau</h2>
+    <app-network-map />
+  </section>
+
+  <section class="card">
+    <h2 class="card-title">Suivi des incidents</h2>
+
+    @if (dashboard(); as dashboard) {
+      <dl class="indicators">
+        <div class="indicator">
+          <dt>Sans prestataire</dt>
+          <dd>{{ dashboard.indicators.unassignedCount }}</dd>
+        </div>
+        <div class="indicator">
+          <dt>En cours de résolution</dt>
+          <dd>{{ dashboard.indicators.assignedCount }}</dd>
+        </div>
+        <div class="indicator">
+          <dt>Résolus à évaluer</dt>
+          <dd>{{ dashboard.indicators.awaitingEvaluationCount }}</dd>
+        </div>
+        <div class="indicator">
+          <dt>Équipements hors service</dt>
+          <dd>{{ dashboard.indicators.outOfServiceEquipmentCount }}</dd>
+        </div>
+      </dl>
+
+      <div class="tracking-filters">
+        <div class="form-field">
+          <label class="form-label" for="attention-filter">Niveau d'attention</label>
+          <select
+            id="attention-filter"
+            class="input"
+            #attentionSelect
+            (change)="filterByAttention(attentionSelect.value)"
+          >
+            <option value="">Tous les niveaux</option>
+            @for (level of attentionLevels; track level) {
+              <option [value]="level">{{ attentionLabels[level] }}</option>
+            }
+          </select>
+        </div>
+        <div class="form-field">
+          <label class="form-label" for="sort-order">Trier par</label>
+          <select id="sort-order" class="input" #sortSelect (change)="sortBy(sortSelect.value)">
+            @for (order of sortOrders; track order) {
+              <option [value]="order" [selected]="order === sortOrder()">
+                {{ sortLabels[order] }}
+              </option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <div class="tracking-groups">
+        <section>
+          <h3 class="group-title">
+            En attente d'affectation
+            <span class="group-count">{{ unassignedIncidents().length }}</span>
+          </h3>
+          <ul class="incident-list">
+            @for (incident of unassignedIncidents(); track incident.id) {
+              <li>
+                <a class="incident-item" [routerLink]="['/incidents', incident.id]">
+                  <span class="status-badge" [attr.data-status]="incident.attentionLevel">
+                    {{ incident.attentionLevel ? attentionLabels[incident.attentionLevel] : '' }}
+                  </span>
+                  <span class="incident-summary">
+                    <span class="incident-equipment">{{ incident.equipmentLabel }}</span>
+                    <span class="incident-meta">
+                      <span class="reference">{{ incident.equipmentReference }}</span> ·
+                      {{ incident.stationName }}
+                    </span>
+                  </span>
+                  <span class="incident-age">{{ incident.openDurationMinutes | duration }}</span>
+                </a>
+              </li>
+            } @empty {
+              <li class="empty-state">Aucun incident en attente d'affectation.</li>
+            }
+          </ul>
+        </section>
+
+        <section>
+          <h3 class="group-title">
+            En cours de résolution
+            <span class="group-count">{{ assignedIncidents().length }}</span>
+          </h3>
+          <ul class="incident-list">
+            @for (incident of assignedIncidents(); track incident.id) {
+              <li>
+                <a class="incident-item" [routerLink]="['/incidents', incident.id]">
+                  <span class="status-badge" [attr.data-status]="incident.attentionLevel">
+                    {{ incident.attentionLevel ? attentionLabels[incident.attentionLevel] : '' }}
+                  </span>
+                  <span class="incident-summary">
+                    <span class="incident-equipment">{{ incident.equipmentLabel }}</span>
+                    <span class="incident-meta">
+                      <span class="reference">{{ incident.equipmentReference }}</span> ·
+                      {{ incident.stationName }} · {{ incident.provider?.name }}
+                    </span>
+                  </span>
+                  <span class="incident-age">{{ incident.openDurationMinutes | duration }}</span>
+                </a>
+              </li>
+            } @empty {
+              <li class="empty-state">Aucun incident en cours de résolution.</li>
+            }
+          </ul>
+        </section>
+
+        <section>
+          <h3 class="group-title">
+            Résolus, en attente d'évaluation
+            <span class="group-count">{{ dashboard.incidentsAwaitingEvaluation.length }}</span>
+          </h3>
+          <ul class="incident-list">
+            @for (incident of dashboard.incidentsAwaitingEvaluation; track incident.id) {
+              <li>
+                <a class="incident-item" [routerLink]="['/incidents', incident.id]">
+                  <span class="status-badge" [attr.data-status]="incident.status">
+                    {{ statusLabels[incident.status] }}
+                  </span>
+                  <span class="incident-summary">
+                    <span class="incident-equipment">{{ incident.equipmentLabel }}</span>
+                    <span class="incident-meta">
+                      {{ incident.stationName }} · {{ incident.provider?.name }}
+                    </span>
+                  </span>
+                  <span class="incident-age">{{ incident.resolvedAt | date: dateTimeFormat }}</span>
+                </a>
+              </li>
+            } @empty {
+              <li class="empty-state">Toutes les interventions terminées ont été évaluées.</li>
+            }
+          </ul>
+        </section>
+      </div>
+    } @else if (errorMessage(); as message) {
+      <p class="alert alert-error" role="alert">{{ message }}</p>
+    }
+  </section>
+</div>

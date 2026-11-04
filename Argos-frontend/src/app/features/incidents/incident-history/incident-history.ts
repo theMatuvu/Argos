@@ -7,6 +7,7 @@ import { catchError, of } from 'rxjs';
 import { apiErrorMessage } from '../../../core/http/api-error';
 import { DATE_TIME_FORMAT } from '../../../shared/date-format';
 import { DurationPipe } from '../../../shared/duration.pipe';
+import { RatingStars } from '../../providers/rating-stars/rating-stars';
 import { IncidentService } from '../incident.service';
 
 const RESOLVED_COUNT_LABELS = {
@@ -17,7 +18,7 @@ const RESOLVED_COUNT_LABELS = {
 
 @Component({
   selector: 'app-incident-history',
-  imports: [DatePipe, DurationPipe, I18nPluralPipe, RouterLink],
+  imports: [DatePipe, DurationPipe, I18nPluralPipe, RatingStars, RouterLink],
   templateUrl: './incident-history.html',
   styleUrl: './incident-history.css',
 })

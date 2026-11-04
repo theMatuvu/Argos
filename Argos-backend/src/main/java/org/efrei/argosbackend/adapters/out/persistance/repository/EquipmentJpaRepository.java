@@ -27,6 +27,8 @@ public interface EquipmentJpaRepository extends JpaRepository<EquipmentEntity, U
             """)
     Optional<EquipmentEntity> findWithStationById(UUID equipmentId);
 
+    long countByOperatingStatus(OperatingStatus operatingStatus);
+
     @Modifying
     @Query("update EquipmentEntity equipment set equipment.operatingStatus = :operatingStatus where equipment.id = :equipmentId")
     void updateOperatingStatus(UUID equipmentId, OperatingStatus operatingStatus);

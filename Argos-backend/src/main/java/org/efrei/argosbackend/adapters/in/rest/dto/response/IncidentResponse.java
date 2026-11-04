@@ -11,6 +11,7 @@ public record IncidentResponse(
         LocalDateTime openedAt,
         IncidentStatus status,
         ProviderResponse provider,
-        LocalDateTime resolvedAt
+        LocalDateTime resolvedAt,
+        Integer rating
 ) {
 }

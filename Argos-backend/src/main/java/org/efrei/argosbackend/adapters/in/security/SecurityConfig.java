@@ -34,6 +34,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/users").hasRole(OPERATIONS_MANAGER)
                         .requestMatchers(HttpMethod.PUT, "/incidents/*/provider").hasRole(OPERATIONS_MANAGER)
                         .requestMatchers(HttpMethod.POST, "/incidents/*/resolution").hasRole(OPERATIONS_MANAGER)
+                        .requestMatchers(HttpMethod.POST, "/incidents/*/evaluation").hasRole(OPERATIONS_MANAGER)
                         .anyRequest().authenticated())
                 .formLogin(form -> form
                         .loginProcessingUrl(LOGIN_URL)
