@@ -74,7 +74,19 @@ INSERT INTO incidents (id, equipment_id, description, opened_at, provider_id, re
     (UUID(), (SELECT id FROM equipments WHERE reference = 'PTQ-LA-DEFENSE-1'),
      'Portique bloqué en position ouverte.',
      NOW() - INTERVAL 2 DAY, (SELECT id FROM providers WHERE name = 'Billettique Express'),
-     NOW() - INTERVAL 1 DAY);
+     NOW() - INTERVAL 1 DAY),
+    (UUID(), (SELECT id FROM equipments WHERE reference = 'DST-PIGALLE-1'),
+     'Lecteur de carte bancaire du distributeur hors service.',
+     NOW() - INTERVAL 40 DAY, (SELECT id FROM providers WHERE name = 'Polytech Maintenance'),
+     NOW() - INTERVAL 38 DAY),
+    (UUID(), (SELECT id FROM equipments WHERE reference = 'PTQ-REUILLY-DIDEROT-1'),
+     'Portique qui refuse les passes Navigo valides.',
+     NOW() - INTERVAL 30 DAY, (SELECT id FROM providers WHERE name = 'Polytech Maintenance'),
+     NOW() - INTERVAL 27 DAY),
+    (UUID(), (SELECT id FROM equipments WHERE reference = 'DST-GARE-DE-LYON-1'),
+     'Distributeur figé sur l''écran de démarrage.',
+     NOW() - INTERVAL 10 DAY, (SELECT id FROM providers WHERE name = 'Polytech Maintenance'),
+     NOW() - INTERVAL 9 DAY);
 
 UPDATE incidents SET rating = 4 WHERE description = 'Marche endommagée en bas de l''escalier.';
 UPDATE incidents SET rating = 3 WHERE description = 'Escalier arrêté, capteur de sécurité défectueux.';
@@ -83,6 +95,9 @@ UPDATE incidents SET rating = 4 WHERE description = 'Porte palière qui se rouvr
 UPDATE incidents SET rating = 2 WHERE description = 'Portique qui laisse passer sans validation.';
 UPDATE incidents SET rating = 3 WHERE description = 'Imprimante de tickets en panne.';
 UPDATE incidents SET rating = 5 WHERE description = 'Écran affichant des horaires erronés.';
+UPDATE incidents SET rating = 2 WHERE description = 'Lecteur de carte bancaire du distributeur hors service.';
+UPDATE incidents SET rating = 3 WHERE description = 'Portique qui refuse les passes Navigo valides.';
+UPDATE incidents SET rating = 2 WHERE description = 'Distributeur figé sur l''écran de démarrage.';
 
 INSERT INTO incidents (id, equipment_id, description, opened_at, provider_id, resolved_at, rating) VALUES
     (UUID(), (SELECT id FROM equipments WHERE reference = 'ASC-BASTILLE-1'),
@@ -181,3 +196,5 @@ INSERT INTO incidents (id, equipment_id, description, opened_at, provider_id, re
      'Annonces sonores muettes sur l''écran du quai.',
      NOW() - INTERVAL 30 HOUR, (SELECT id FROM providers WHERE name = 'Affichage Horizon'),
      NOW() - INTERVAL 24 HOUR, 5);
+
+UPDATE incidents SET evaluated_at = resolved_at + INTERVAL 2 HOUR WHERE rating IS NOT NULL;

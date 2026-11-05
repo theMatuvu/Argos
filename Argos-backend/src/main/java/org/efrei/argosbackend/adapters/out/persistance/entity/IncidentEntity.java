@@ -48,8 +48,10 @@ public class IncidentEntity {
 
     private Integer rating;
 
+    private LocalDateTime evaluatedAt;
+
     public IncidentEntity(UUID id, EquipmentEntity equipment, String description, LocalDateTime openedAt,
-                          ProviderEntity provider, LocalDateTime resolvedAt, Integer rating) {
+                          ProviderEntity provider, LocalDateTime resolvedAt, Integer rating, LocalDateTime evaluatedAt) {
         this.id = id;
         this.equipment = equipment;
         this.description = description;
@@ -57,5 +59,6 @@ public class IncidentEntity {
         this.provider = provider;
         this.resolvedAt = resolvedAt;
         this.rating = rating;
+        this.evaluatedAt = evaluatedAt;
     }
 }

@@ -1,17 +1,23 @@
 import { DatePipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, computed, inject, input, linkedSignal, signal } from '@angular/core';
-import { toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { Observable, catchError, of, switchMap } from 'rxjs';
 import { AuthService } from '../../../core/auth/auth.service';
-import { apiErrorMessage } from '../../../core/http/api-error';
+import { apiErrorMessage, hasApiErrorCode } from '../../../core/http/api-error';
 import { DATE_TIME_FORMAT } from '../../../shared/date-format';
 import { DurationPipe } from '../../../shared/duration.pipe';
 import { visibleError } from '../../../shared/forms/form-errors';
 import { EQUIPMENT_TYPE_LABELS } from '../../equipments/equipment.model';
-import { RATING_SCALE, RATING_VALUES } from '../../providers/provider.model';
+import {
+  PROVIDER_UNDER_SURVEILLANCE_CODE,
+  RATING_SCALE,
+  RATING_VALUES,
+  SURVEILLANCE_LABEL,
+  providerOptionLabel,
+} from '../../providers/provider.model';
 import { ProviderService } from '../../providers/provider.service';
 import { RatingStars } from '../../providers/rating-stars/rating-stars';
 import {
@@ -47,6 +53,8 @@ export class IncidentDetail {
   protected readonly constraints = INCIDENT_DESCRIPTION_CONSTRAINTS;
   protected readonly ratingScale = RATING_SCALE;
   protected readonly ratingValues = RATING_VALUES;
+  protected readonly surveillanceLabel = SURVEILLANCE_LABEL;
+  protected readonly providerOptionLabel = providerOptionLabel;
   protected readonly isOperationsManager = computed(
     () => this.auth.currentUser()?.profile === 'OPERATIONS_MANAGER',
   );
@@ -56,6 +64,7 @@ export class IncidentDetail {
   protected readonly pending = signal(false);
   protected readonly editingDescription = signal(false);
   protected readonly confirmingResolution = signal(false);
+  protected readonly surveillanceWarning = signal<string | null>(null);
   protected readonly providers = toSignal(
     this.providerService.getProviders().pipe(catchError(() => of([]))),
     { initialValue: [] },
@@ -83,6 +92,12 @@ export class IncidentDetail {
     { initialValue: null },
   );
   protected readonly incident = linkedSignal(() => this.loadedIncident());
+
+  constructor() {
+    this.assignmentForm.controls.providerId.valueChanges
+      .pipe(takeUntilDestroyed())
+      .subscribe(() => this.surveillanceWarning.set(null));
+  }
 
   protected descriptionError(): string | null {
     return visibleError(this.descriptionForm.controls.description, INCIDENT_DESCRIPTION_ERROR);
@@ -123,7 +138,7 @@ export class IncidentDetail {
     );
   }
 
-  protected assignProvider(): void {
+  protected assignProvider(surveillanceConfirmed = false): void {
     if (this.assignmentForm.invalid) {
       this.assignmentForm.markAllAsTouched();
       return;
@@ -132,9 +147,18 @@ export class IncidentDetail {
       this.incidentService.assignProvider(
         this.incidentId(),
         this.assignmentForm.getRawValue().providerId,
+        surveillanceConfirmed,
       ),
       "Le prestataire a été affecté à l'incident.",
     );
+  }
+
+  protected confirmAssignment(): void {
+    this.assignProvider(true);
+  }
+
+  protected cancelAssignment(): void {
+    this.surveillanceWarning.set(null);
   }
 
   protected askResolution(): void {
@@ -165,6 +189,7 @@ export class IncidentDetail {
     this.pending.set(true);
     this.actionError.set(null);
     this.successMessage.set(null);
+    this.surveillanceWarning.set(null);
     request.subscribe({
       next: (updated) => this.handleSuccess(updated, successMessage),
       error: (error: HttpErrorResponse) => this.handleActionError(error),
@@ -182,7 +207,11 @@ export class IncidentDetail {
   }
 
   private handleActionError(error: HttpErrorResponse): void {
-    this.actionError.set(apiErrorMessage(error));
+    if (hasApiErrorCode(error, PROVIDER_UNDER_SURVEILLANCE_CODE)) {
+      this.surveillanceWarning.set(apiErrorMessage(error));
+    } else {
+      this.actionError.set(apiErrorMessage(error));
+    }
     this.confirmingResolution.set(false);
     this.pending.set(false);
   }

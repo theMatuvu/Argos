@@ -7,7 +7,7 @@ import { Observable, catchError, of, switchMap } from 'rxjs';
 import { apiErrorMessage } from '../../../core/http/api-error';
 import { DATE_TIME_FORMAT } from '../../../shared/date-format';
 import { DurationPipe } from '../../../shared/duration.pipe';
-import { ProviderDetails } from '../provider.model';
+import { ProviderDetails, SURVEILLANCE_LABEL } from '../provider.model';
 import { ProviderService } from '../provider.service';
 import { RatingStars } from '../rating-stars/rating-stars';
 
@@ -37,6 +37,7 @@ export class ProviderDetail {
   protected readonly dateTimeFormat = DATE_TIME_FORMAT;
   protected readonly evaluationCountLabels = EVALUATION_COUNT_LABELS;
   protected readonly resolvedCountLabels = RESOLVED_COUNT_LABELS;
+  protected readonly surveillanceLabel = SURVEILLANCE_LABEL;
   protected readonly errorMessage = signal<string | null>(null);
   protected readonly details = toSignal(
     toObservable(this.providerId).pipe(switchMap((providerId) => this.load(providerId))),

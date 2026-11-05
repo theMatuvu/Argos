@@ -1,6 +1,7 @@
 package org.efrei.argosbackend.adapters.in.rest.exception;
 
 import org.efrei.argosbackend.domain.exception.BusinessRuleException;
+import org.efrei.argosbackend.domain.exception.ProviderUnderSurveillanceException;
 import org.efrei.argosbackend.domain.exception.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
@@ -16,6 +17,9 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    private static final String PROVIDER_UNDER_SURVEILLANCE_CODE = "PROVIDER_UNDER_SURVEILLANCE";
+    private static final String CODE_PROPERTY = "code";
+
     @ExceptionHandler(ResourceNotFoundException.class)
     public ProblemDetail handleNotFound(ResourceNotFoundException exception) {
         return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, exception.getMessage());
@@ -24,6 +28,13 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BusinessRuleException.class)
     public ProblemDetail handleBusinessRuleViolation(BusinessRuleException exception) {
         return ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, exception.getMessage());
+    }
+
+    @ExceptionHandler(ProviderUnderSurveillanceException.class)
+    public ProblemDetail handleProviderUnderSurveillance(ProviderUnderSurveillanceException exception) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, exception.getMessage());
+        problem.setProperty(CODE_PROPERTY, PROVIDER_UNDER_SURVEILLANCE_CODE);
+        return problem;
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)

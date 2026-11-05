@@ -204,6 +204,11 @@ textarea.input {
   color: var(--color-danger);
 }
 
+.alert-warning {
+  background: var(--color-attention-orange-soft);
+  color: var(--color-attention-orange);
+}
+
 .alert-success {
   background: var(--color-success-soft);
   color: var(--color-success);

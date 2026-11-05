@@ -19,10 +19,13 @@ public class ResolveIncidentService implements ResolveIncidentUseCase {
 
     private final IncidentRepositoryPort incidentRepository;
     private final EquipmentRepositoryPort equipmentRepository;
+    private final ProviderSurveillanceCalculator providerSurveillanceCalculator;
     private final Clock clock;
 
-    public ResolveIncidentService(IncidentRepositoryPort incidentRepository, EquipmentRepositoryPort equipmentRepository, Clock clock) {
+    public ResolveIncidentService(IncidentRepositoryPort incidentRepository, EquipmentRepositoryPort equipmentRepository,
+                                  ProviderSurveillanceCalculator providerSurveillanceCalculator, Clock clock) {
         this.incidentRepository = incidentRepository;
+        this.providerSurveillanceCalculator = providerSurveillanceCalculator;
         this.equipmentRepository = equipmentRepository;
         this.clock = clock;
     }
@@ -35,7 +38,7 @@ public class ResolveIncidentService implements ResolveIncidentUseCase {
         LocalDateTime now = LocalDateTime.now(clock);
         Incident resolved = incidentRepository.save(incident.resolve(now));
         putEquipmentBackInServiceIfNoActiveIncident(resolved.equipment().id());
-        return IncidentDetails.of(resolved, now);
+        return IncidentDetails.of(resolved, now, providerSurveillanceCalculator.of(resolved.provider()));
     }
 
     private void putEquipmentBackInServiceIfNoActiveIncident(UUID equipmentId) {

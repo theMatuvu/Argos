@@ -20,7 +20,8 @@ public record Incident(
         LocalDateTime openedAt,
         Provider provider,
         LocalDateTime resolvedAt,
-        Rating rating
+        Rating rating,
+        LocalDateTime evaluatedAt
 ) {
 
     public static final int DESCRIPTION_MIN_LENGTH = 10;
@@ -35,7 +36,7 @@ public record Incident(
     }
 
     public static Incident declare(Equipment equipment, String description, LocalDateTime openedAt) {
-        return new Incident(null, equipment, description, openedAt, null, null, null);
+        return new Incident(null, equipment, description, openedAt, null, null, null, null);
     }
 
     public boolean isResolved() {
@@ -80,27 +81,27 @@ public record Incident(
     }
 
     public Incident withId(UUID persistedId) {
-        return new Incident(persistedId, equipment, description, openedAt, provider, resolvedAt, rating);
+        return new Incident(persistedId, equipment, description, openedAt, provider, resolvedAt, rating, evaluatedAt);
     }
 
     public Incident withDescription(String newDescription) {
         ensureNotResolved();
-        return new Incident(id, equipment, newDescription, openedAt, provider, resolvedAt, rating);
+        return new Incident(id, equipment, newDescription, openedAt, provider, resolvedAt, rating, evaluatedAt);
     }
 
     public Incident assignTo(Provider newProvider) {
         ensureNotResolved();
-        return new Incident(id, equipment, description, openedAt, newProvider, resolvedAt, rating);
+        return new Incident(id, equipment, description, openedAt, newProvider, resolvedAt, rating, evaluatedAt);
     }
 
     public Incident resolve(LocalDateTime resolutionTime) {
         ensureNotResolved();
-        return new Incident(id, equipment, description, openedAt, provider, resolutionTime, rating);
+        return new Incident(id, equipment, description, openedAt, provider, resolutionTime, rating, evaluatedAt);
     }
 
-    public Incident evaluate(Rating newRating) {
+    public Incident evaluate(Rating newRating, LocalDateTime evaluationTime) {
         ensureEvaluable();
-        return new Incident(id, equipment, description, openedAt, provider, resolvedAt, newRating);
+        return new Incident(id, equipment, description, openedAt, provider, resolvedAt, newRating, evaluationTime);
     }
 
     private void ensureNotResolved() {

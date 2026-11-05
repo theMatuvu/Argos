@@ -15,10 +15,13 @@ import java.util.UUID;
 public class FindIncidentDetailsService implements FindIncidentDetailsUseCase {
 
     private final IncidentRepositoryPort incidentRepository;
+    private final ProviderSurveillanceCalculator providerSurveillanceCalculator;
     private final Clock clock;
 
-    public FindIncidentDetailsService(IncidentRepositoryPort incidentRepository, Clock clock) {
+    public FindIncidentDetailsService(IncidentRepositoryPort incidentRepository, ProviderSurveillanceCalculator providerSurveillanceCalculator,
+                                      Clock clock) {
         this.incidentRepository = incidentRepository;
+        this.providerSurveillanceCalculator = providerSurveillanceCalculator;
         this.clock = clock;
     }
 
@@ -26,6 +29,6 @@ public class FindIncidentDetailsService implements FindIncidentDetailsUseCase {
     public IncidentDetails find(UUID incidentId) {
         Incident incident = incidentRepository.findById(incidentId)
                 .orElseThrow(() -> new IncidentNotFoundException(incidentId));
-        return IncidentDetails.of(incident, LocalDateTime.now(clock));
+        return IncidentDetails.of(incident, LocalDateTime.now(clock), providerSurveillanceCalculator.of(incident.provider()));
     }
 }

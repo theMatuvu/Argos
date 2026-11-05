@@ -9,6 +9,8 @@ export interface Provider {
 export interface ProviderSummary extends Provider {
   averageRating: number | null;
   evaluationCount: number;
+  recentAverageRating: number | null;
+  underSurveillance: boolean;
 }
 
 export interface ProviderDetails extends ProviderSummary {
@@ -20,6 +22,14 @@ export const EVALUATION_COUNT_LABELS = {
   '=1': '1 évaluation',
   other: '# évaluations',
 };
+
+export const SURVEILLANCE_LABEL = 'sous surveillance';
+
+export const PROVIDER_UNDER_SURVEILLANCE_CODE = 'PROVIDER_UNDER_SURVEILLANCE';
+
+export function providerOptionLabel(provider: ProviderSummary): string {
+  return provider.underSurveillance ? `${provider.name} (${SURVEILLANCE_LABEL})` : provider.name;
+}
 
 export const RATING_SCALE = {
   min: 1,
