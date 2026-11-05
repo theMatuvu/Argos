@@ -100,7 +100,11 @@ export function trendChart(
   };
 }
 
-export function sparklineChart(values: number[], color: string, palette: StatisticsPalette): ChartOption {
+export function sparklineChart(
+  values: number[],
+  color: string,
+  palette: StatisticsPalette,
+): ChartOption {
   return {
     ...baseOptions(palette),
     grid: { left: 0, right: 0, top: 4, bottom: 0 },
@@ -255,6 +259,8 @@ function verticalFade(color: string) {
 }
 
 function withAlpha(hexColor: string, alpha: number): string {
-  const [red, green, blue] = [1, 3, 5].map((start) => parseInt(hexColor.slice(start, start + 2), 16));
+  const [red, green, blue] = [1, 3, 5].map((start) =>
+    parseInt(hexColor.slice(start, start + 2), 16),
+  );
   return `rgba(${red}, ${green}, ${blue}, ${alpha})`;
 }

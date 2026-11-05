@@ -2,7 +2,7 @@ import { Routes } from '@angular/router';
 import { authGuard } from './core/auth/auth.guard';
 import { guestGuard } from './core/auth/guest.guard';
 import { roleGuard } from './core/auth/role.guard';
-import { Shell } from './core/layout/shell/shell';
+import { Shell, WIDE_LAYOUT } from './core/layout/shell/shell';
 
 export const routes: Routes = [
   {
@@ -20,13 +20,13 @@ export const routes: Routes = [
       {
         path: 'dashboard',
         title: 'Tableau de bord · Argos',
+        data: WIDE_LAYOUT,
         loadComponent: () => import('./features/dashboard/dashboard').then((m) => m.Dashboard),
       },
       {
         path: 'statistics',
         title: 'Statistiques · Argos',
-        loadComponent: () =>
-          import('./features/statistics/statistics').then((m) => m.Statistics),
+        loadComponent: () => import('./features/statistics/statistics').then((m) => m.Statistics),
       },
       {
         path: 'equipments',

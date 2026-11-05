@@ -1,10 +1,41 @@
 :host {
-  display: block;
-  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+}
+
+:host(.wide-layout) {
+  height: 100dvh;
 }
 
 .page {
+  width: 100%;
   max-width: var(--content-max-width);
   margin: 0 auto;
   padding: var(--space-6) var(--space-4);
+}
+
+.page-wide {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  min-height: 0;
+  max-width: none;
+  padding: var(--space-5) var(--space-6);
+}
+
+@media (max-width: 64rem) {
+  :host(.wide-layout) {
+    height: auto;
+  }
+
+  .page-wide {
+    flex: auto;
+  }
+}
+
+@media (max-width: 48rem) {
+  .page-wide {
+    padding-inline: var(--space-4);
+  }
 }

@@ -1,11 +1,12 @@
 .page-header {
-  margin-bottom: var(--space-5);
+  margin-bottom: var(--space-4);
 }
 
 .page-title {
   margin: 0;
-  font-size: var(--font-size-2xl);
+  font-size: var(--font-size-xl);
   font-weight: var(--font-weight-bold);
+  letter-spacing: -0.01em;
 }
 
 .page-subtitle {
@@ -306,6 +307,54 @@ textarea.input {
 .status-badge[data-status='RESOLVED'] {
   background: var(--color-resolved-soft);
   color: var(--color-resolved);
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-3);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+  transition:
+    background-color var(--transition-fast),
+    border-color var(--transition-fast);
+}
+
+.chip:hover {
+  background: var(--color-background);
+}
+
+.chip.is-active {
+  background: var(--color-text);
+  border-color: var(--color-text);
+  color: var(--color-surface);
+}
+
+.chip-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+}
+
+.chip[data-status='RED'] .chip-dot {
+  background: var(--color-attention-red);
+}
+
+.chip[data-status='ORANGE'] .chip-dot {
+  background: var(--color-attention-orange);
+}
+
+.chip[data-status='GREEN'] .chip-dot {
+  background: var(--color-attention-green);
+}
+
+.chip-count {
+  font-weight: var(--font-weight-bold);
+  font-variant-numeric: tabular-nums;
 }
 
 @media (max-width: 48rem) {
