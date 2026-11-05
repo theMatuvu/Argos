@@ -23,6 +23,12 @@ export const routes: Routes = [
         loadComponent: () => import('./features/dashboard/dashboard').then((m) => m.Dashboard),
       },
       {
+        path: 'statistics',
+        title: 'Statistiques · Argos',
+        loadComponent: () =>
+          import('./features/statistics/statistics').then((m) => m.Statistics),
+      },
+      {
         path: 'equipments',
         title: 'Équipements · Argos',
         loadComponent: () =>

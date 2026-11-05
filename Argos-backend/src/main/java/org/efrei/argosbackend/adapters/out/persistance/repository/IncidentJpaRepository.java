@@ -1,6 +1,8 @@
 package org.efrei.argosbackend.adapters.out.persistance.repository;
 
 import org.efrei.argosbackend.adapters.out.persistance.entity.IncidentEntity;
+import org.efrei.argosbackend.adapters.out.persistance.projection.EquipmentTypeIncidentCountView;
+import org.efrei.argosbackend.adapters.out.persistance.projection.StationIncidentCountView;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -56,4 +58,23 @@ public interface IncidentJpaRepository extends JpaRepository<IncidentEntity, UUI
     List<IncidentEntity> findAllResolvedByProviderId(UUID providerId);
 
     boolean existsByEquipmentIdAndResolvedAtIsNull(UUID equipmentId);
+
+    @Query("""
+            select equipment.type as equipmentType, count(incident) as incidentCount
+            from IncidentEntity incident
+            join incident.equipment equipment
+            group by equipment.type
+            """)
+    List<EquipmentTypeIncidentCountView> countGroupedByEquipmentType();
+
+    @Query(value = """
+            SELECT station.name AS stationName, COUNT(incident.id) AS incidentCount
+            FROM incidents incident
+            JOIN equipments equipment ON equipment.id = incident.equipment_id
+            JOIN stations station ON station.id = equipment.station_id
+            GROUP BY station.id, station.name
+            ORDER BY incidentCount DESC, station.name
+            LIMIT :limit
+            """, nativeQuery = true)
+    List<StationIncidentCountView> findMostAffectedStations(int limit);
 }

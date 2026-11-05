@@ -15,6 +15,12 @@ export interface ProviderDetails extends ProviderSummary {
   resolvedIncidents: IncidentDetails[];
 }
 
+export const EVALUATION_COUNT_LABELS = {
+  '=0': 'Aucune évaluation',
+  '=1': '1 évaluation',
+  other: '# évaluations',
+};
+
 export const RATING_SCALE = {
   min: 1,
   max: 5,
