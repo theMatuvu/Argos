@@ -1,5 +1,8 @@
 package org.efrei.argosbackend.application.usecase;
 
+import org.efrei.argosbackend.domain.exception.IncidentAlreadyResolvedException;
+import org.efrei.argosbackend.domain.exception.IncidentNotFoundException;
+import org.efrei.argosbackend.domain.exception.ProviderNotFoundException;
 import org.efrei.argosbackend.domain.exception.ProviderUnderSurveillanceException;
 import org.efrei.argosbackend.domain.model.Equipment;
 import org.efrei.argosbackend.domain.model.Incident;
@@ -84,6 +87,37 @@ class AssignProviderServiceTest {
         assertEquals(PROVIDER, details.incident().provider());
         assertFalse(details.providerUnderSurveillance());
         verify(incidentRepository).save(any(Incident.class));
+    }
+
+    @Test
+    void failsWhenTheIncidentDoesNotExist() {
+        UUID unknownIncidentId = UUID.randomUUID();
+        when(incidentRepository.findById(unknownIncidentId)).thenReturn(Optional.empty());
+
+        assertThrows(IncidentNotFoundException.class,
+                () -> service.assign(new AssignProviderCommand(unknownIncidentId, PROVIDER.id(), false)));
+        verify(incidentRepository, never()).save(any());
+    }
+
+    @Test
+    void failsWhenTheProviderDoesNotExist() {
+        UUID unknownProviderId = UUID.randomUUID();
+        when(providerRepository.findById(unknownProviderId)).thenReturn(Optional.empty());
+
+        assertThrows(ProviderNotFoundException.class,
+                () -> service.assign(new AssignProviderCommand(activeIncident.id(), unknownProviderId, false)));
+        verify(incidentRepository, never()).save(any());
+    }
+
+    @Test
+    void refusesToAssignAResolvedIncident() {
+        Incident resolved = activeIncident.resolve(NOW);
+        when(incidentRepository.findById(resolved.id())).thenReturn(Optional.of(resolved));
+        givenProviderRatings(4, 4, 4, 4, 4);
+
+        assertThrows(IncidentAlreadyResolvedException.class,
+                () -> service.assign(new AssignProviderCommand(resolved.id(), PROVIDER.id(), false)));
+        verify(incidentRepository, never()).save(any());
     }
 
     private AssignProviderCommand command(boolean surveillanceConfirmed) {
