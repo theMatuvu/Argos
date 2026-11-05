@@ -28,9 +28,14 @@ export class IncidentService {
     });
   }
 
-  assignProvider(incidentId: string, providerId: string): Observable<IncidentDetails> {
+  assignProvider(
+    incidentId: string,
+    providerId: string,
+    surveillanceConfirmed = false,
+  ): Observable<IncidentDetails> {
     return this.http.put<IncidentDetails>(`${API_BASE_URL}/incidents/${incidentId}/provider`, {
       providerId,
+      surveillanceConfirmed,
     });
   }
 

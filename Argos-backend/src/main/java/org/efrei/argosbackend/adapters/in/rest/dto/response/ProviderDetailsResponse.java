@@ -9,6 +9,8 @@ public record ProviderDetailsResponse(
         String contact,
         Double averageRating,
         int evaluationCount,
+        Double recentAverageRating,
+        boolean underSurveillance,
         List<IncidentDetailsResponse> resolvedIncidents
 ) {
 }

@@ -16,10 +16,13 @@ import java.util.UUID;
 public class EvaluateIncidentService implements EvaluateIncidentUseCase {
 
     private final IncidentRepositoryPort incidentRepository;
+    private final ProviderSurveillanceCalculator providerSurveillanceCalculator;
     private final Clock clock;
 
-    public EvaluateIncidentService(IncidentRepositoryPort incidentRepository, Clock clock) {
+    public EvaluateIncidentService(IncidentRepositoryPort incidentRepository, ProviderSurveillanceCalculator providerSurveillanceCalculator,
+                                   Clock clock) {
         this.incidentRepository = incidentRepository;
+        this.providerSurveillanceCalculator = providerSurveillanceCalculator;
         this.clock = clock;
     }
 
@@ -27,7 +30,8 @@ public class EvaluateIncidentService implements EvaluateIncidentUseCase {
     public IncidentDetails evaluate(UUID incidentId, int rating) {
         Incident incident = incidentRepository.findById(incidentId)
                 .orElseThrow(() -> new IncidentNotFoundException(incidentId));
-        Incident evaluated = incidentRepository.save(incident.evaluate(new Rating(rating)));
-        return IncidentDetails.of(evaluated, LocalDateTime.now(clock));
+        LocalDateTime now = LocalDateTime.now(clock);
+        Incident evaluated = incidentRepository.save(incident.evaluate(new Rating(rating), now));
+        return IncidentDetails.of(evaluated, now, providerSurveillanceCalculator.of(evaluated.provider()));
     }
 }

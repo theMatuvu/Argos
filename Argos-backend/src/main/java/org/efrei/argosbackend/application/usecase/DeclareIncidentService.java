@@ -4,6 +4,7 @@ import org.efrei.argosbackend.domain.exception.EquipmentNotFoundException;
 import org.efrei.argosbackend.domain.model.Equipment;
 import org.efrei.argosbackend.domain.model.Incident;
 import org.efrei.argosbackend.domain.model.IncidentDetails;
+import org.efrei.argosbackend.domain.model.ProviderSurveillance;
 import org.efrei.argosbackend.domain.model.enums.OperatingStatus;
 import org.efrei.argosbackend.domain.port.in.DeclareIncidentCommand;
 import org.efrei.argosbackend.domain.port.in.DeclareIncidentUseCase;
@@ -36,6 +37,6 @@ public class DeclareIncidentService implements DeclareIncidentUseCase {
         LocalDateTime now = LocalDateTime.now(clock);
         Incident incident = incidentRepository.save(Incident.declare(equipment, command.description(), now));
         equipmentRepository.updateOperatingStatus(equipment.id(), OperatingStatus.OUT_OF_SERVICE);
-        return IncidentDetails.of(incident, now);
+        return IncidentDetails.of(incident, now, ProviderSurveillance.none());
     }
 }

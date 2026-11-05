@@ -73,6 +73,9 @@
           <dd>
             @if (incident.provider; as provider) {
               <a [routerLink]="['/providers', provider.id]">{{ provider.name }}</a>
+              @if (incident.providerUnderSurveillance) {
+                <span class="status-badge" data-status="RED">{{ surveillanceLabel }}</span>
+              }
               <span class="secondary-text">{{ provider.contact }}</span>
             } @else {
               Aucun prestataire affecté
@@ -155,7 +158,7 @@
               <select id="provider" class="input" formControlName="providerId">
                 <option value="" disabled>Choisir un prestataire</option>
                 @for (provider of providers(); track provider.id) {
-                  <option [value]="provider.id">{{ provider.name }}</option>
+                  <option [value]="provider.id">{{ providerOptionLabel(provider) }}</option>
                 }
               </select>
               @if (providerError(); as error) {
@@ -166,6 +169,23 @@
               {{ incident.provider ? 'Réaffecter' : 'Affecter' }}
             </button>
           </form>
+
+          @if (surveillanceWarning(); as warning) {
+            <div class="surveillance-confirmation" role="alert">
+              <p class="alert alert-warning">{{ warning }}</p>
+              <button type="button" class="btn btn-secondary" (click)="cancelAssignment()">
+                Annuler
+              </button>
+              <button
+                type="button"
+                class="btn btn-primary"
+                [disabled]="pending()"
+                (click)="confirmAssignment()"
+              >
+                Confirmer l'affectation
+              </button>
+            </div>
+          }
 
           <div class="resolution">
             @if (confirmingResolution()) {

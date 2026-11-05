@@ -75,7 +75,7 @@ public class IncidentController {
 
     @PutMapping("/incidents/{incidentId}/provider")
     public IncidentDetailsResponse assignProvider(@PathVariable UUID incidentId, @RequestBody @Valid AssignProviderRequest request) {
-        return incidentRestMapper.toResponse(assignProvider.assign(incidentId, request.providerId()));
+        return incidentRestMapper.toResponse(assignProvider.assign(incidentRestMapper.toCommand(incidentId, request)));
     }
 
     @PostMapping("/incidents/{incidentId}/resolution")

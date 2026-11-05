@@ -1,4 +1,4 @@
 package org.efrei.argosbackend.domain.model;
 
-public record ProviderSummary(Provider provider, ProviderRating rating) {
+public record ProviderSummary(Provider provider, ProviderRating rating, ProviderSurveillance surveillance) {
 }

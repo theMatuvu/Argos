@@ -25,6 +25,7 @@ export interface IncidentDetails {
   openDurationMinutes: number;
   rating: number | null;
   provider: Provider | null;
+  providerUnderSurveillance: boolean;
   equipmentId: string;
   equipmentReference: string;
   equipmentLabel: string;

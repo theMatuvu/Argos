@@ -27,7 +27,8 @@ public class IncidentPersistenceMapper {
                 incident.getOpenedAt(),
                 toDomainProvider(incident),
                 incident.getResolvedAt(),
-                toDomainRating(incident)
+                toDomainRating(incident),
+                incident.getEvaluatedAt()
         );
     }
 
@@ -39,7 +40,8 @@ public class IncidentPersistenceMapper {
                 incident.openedAt(),
                 provider,
                 incident.resolvedAt(),
-                incident.isEvaluated() ? incident.rating().value() : null
+                incident.isEvaluated() ? incident.rating().value() : null,
+                incident.evaluatedAt()
         );
     }
 

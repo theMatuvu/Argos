@@ -6,6 +6,7 @@ import java.util.UUID;
 
 public record AssignProviderRequest(
         @NotNull(message = "Le prestataire est obligatoire.")
-        UUID providerId
+        UUID providerId,
+        boolean surveillanceConfirmed
 ) {
 }

@@ -4,7 +4,7 @@ import org.efrei.argosbackend.domain.model.Incident;
 import org.efrei.argosbackend.domain.model.Provider;
 import org.efrei.argosbackend.domain.model.ProviderRating;
 import org.efrei.argosbackend.domain.model.ProviderSummary;
-import org.efrei.argosbackend.domain.model.Rating;
+import org.efrei.argosbackend.domain.model.ProviderSurveillance;
 import org.efrei.argosbackend.domain.port.in.ListProvidersUseCase;
 import org.efrei.argosbackend.domain.port.out.IncidentRepositoryPort;
 import org.efrei.argosbackend.domain.port.out.ProviderRepositoryPort;
@@ -28,22 +28,20 @@ public class ListProvidersService implements ListProvidersUseCase {
 
     @Override
     public List<ProviderSummary> list() {
-        Map<UUID, List<Rating>> ratingsByProvider = ratingsByProvider();
+        Map<UUID, List<Incident>> evaluatedIncidentsByProvider = evaluatedIncidentsByProvider();
         return providerRepository.findAll().stream()
-                .map(provider -> toSummary(provider, ratingsByProvider))
+                .map(provider -> toSummary(provider, evaluatedIncidentsByProvider.getOrDefault(provider.id(), List.of())))
                 .toList();
     }
 
-    private Map<UUID, List<Rating>> ratingsByProvider() {
+    private Map<UUID, List<Incident>> evaluatedIncidentsByProvider() {
         return incidentRepository.findAllResolved().stream()
                 .filter(Incident::isEvaluated)
-                .collect(Collectors.groupingBy(
-                        incident -> incident.provider().id(),
-                        Collectors.mapping(Incident::rating, Collectors.toList())
-                ));
+                .collect(Collectors.groupingBy(incident -> incident.provider().id()));
     }
 
-    private ProviderSummary toSummary(Provider provider, Map<UUID, List<Rating>> ratingsByProvider) {
-        return new ProviderSummary(provider, ProviderRating.of(ratingsByProvider.getOrDefault(provider.id(), List.of())));
+    private ProviderSummary toSummary(Provider provider, List<Incident> evaluatedIncidents) {
+        ProviderRating rating = ProviderRating.of(evaluatedIncidents.stream().map(Incident::rating).toList());
+        return new ProviderSummary(provider, rating, ProviderSurveillance.of(evaluatedIncidents));
     }
 }

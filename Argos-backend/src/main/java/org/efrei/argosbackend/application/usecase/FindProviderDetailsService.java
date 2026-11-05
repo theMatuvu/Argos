@@ -5,6 +5,7 @@ import org.efrei.argosbackend.domain.model.Incident;
 import org.efrei.argosbackend.domain.model.IncidentDetails;
 import org.efrei.argosbackend.domain.model.Provider;
 import org.efrei.argosbackend.domain.model.ProviderDetails;
+import org.efrei.argosbackend.domain.model.ProviderSurveillance;
 import org.efrei.argosbackend.domain.port.in.FindProviderDetailsUseCase;
 import org.efrei.argosbackend.domain.port.out.IncidentRepositoryPort;
 import org.efrei.argosbackend.domain.port.out.ProviderRepositoryPort;
@@ -41,9 +42,11 @@ public class FindProviderDetailsService implements FindProviderDetailsUseCase {
 
     private List<IncidentDetails> resolvedIncidents(UUID providerId) {
         LocalDateTime now = LocalDateTime.now(clock);
-        return incidentRepository.findAllResolvedByProviderId(providerId).stream()
+        List<Incident> resolvedIncidents = incidentRepository.findAllResolvedByProviderId(providerId);
+        ProviderSurveillance surveillance = ProviderSurveillance.of(resolvedIncidents);
+        return resolvedIncidents.stream()
                 .sorted(MOST_RECENTLY_RESOLVED_FIRST)
-                .map(incident -> IncidentDetails.of(incident, now))
+                .map(incident -> IncidentDetails.of(incident, now, surveillance))
                 .toList();
     }
 }

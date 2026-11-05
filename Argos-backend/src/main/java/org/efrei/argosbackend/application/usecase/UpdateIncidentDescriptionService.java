@@ -15,10 +15,13 @@ import java.util.UUID;
 public class UpdateIncidentDescriptionService implements UpdateIncidentDescriptionUseCase {
 
     private final IncidentRepositoryPort incidentRepository;
+    private final ProviderSurveillanceCalculator providerSurveillanceCalculator;
     private final Clock clock;
 
-    public UpdateIncidentDescriptionService(IncidentRepositoryPort incidentRepository, Clock clock) {
+    public UpdateIncidentDescriptionService(IncidentRepositoryPort incidentRepository,
+                                            ProviderSurveillanceCalculator providerSurveillanceCalculator, Clock clock) {
         this.incidentRepository = incidentRepository;
+        this.providerSurveillanceCalculator = providerSurveillanceCalculator;
         this.clock = clock;
     }
 
@@ -27,6 +30,6 @@ public class UpdateIncidentDescriptionService implements UpdateIncidentDescripti
         Incident incident = incidentRepository.findById(incidentId)
                 .orElseThrow(() -> new IncidentNotFoundException(incidentId));
         Incident updated = incidentRepository.save(incident.withDescription(description));
-        return IncidentDetails.of(updated, LocalDateTime.now(clock));
+        return IncidentDetails.of(updated, LocalDateTime.now(clock), providerSurveillanceCalculator.of(updated.provider()));
     }
 }

@@ -15,4 +15,8 @@ public record ProviderDetails(Provider provider, List<IncidentDetails> resolvedI
                 .filter(Objects::nonNull)
                 .toList());
     }
+
+    public ProviderSurveillance surveillance() {
+        return ProviderSurveillance.of(resolvedIncidents.stream().map(IncidentDetails::incident).toList());
+    }
 }

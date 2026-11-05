@@ -20,6 +20,9 @@
             <tr>
               <td>
                 <a [routerLink]="['/providers', provider.id]">{{ provider.name }}</a>
+                @if (provider.underSurveillance) {
+                  <span class="status-badge" data-status="RED">{{ surveillanceLabel }}</span>
+                }
               </td>
               <td>{{ provider.contact }}</td>
               <td>

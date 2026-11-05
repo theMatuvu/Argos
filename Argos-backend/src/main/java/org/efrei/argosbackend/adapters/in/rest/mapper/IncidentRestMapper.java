@@ -1,11 +1,13 @@
 package org.efrei.argosbackend.adapters.in.rest.mapper;
 
+import org.efrei.argosbackend.adapters.in.rest.dto.request.AssignProviderRequest;
 import org.efrei.argosbackend.adapters.in.rest.dto.request.IncidentDescriptionRequest;
 import org.efrei.argosbackend.adapters.in.rest.dto.response.IncidentDetailsResponse;
 import org.efrei.argosbackend.adapters.in.rest.dto.response.IncidentResponse;
 import org.efrei.argosbackend.domain.model.Equipment;
 import org.efrei.argosbackend.domain.model.Incident;
 import org.efrei.argosbackend.domain.model.IncidentDetails;
+import org.efrei.argosbackend.domain.port.in.AssignProviderCommand;
 import org.efrei.argosbackend.domain.port.in.DeclareIncidentCommand;
 import org.springframework.stereotype.Component;
 
@@ -45,6 +47,7 @@ public class IncidentRestMapper {
                 details.openDuration().toMinutes(),
                 ratingValue(incident),
                 providerRestMapper.toResponse(incident.provider()),
+                details.providerUnderSurveillance(),
                 equipment.id(),
                 equipment.reference(),
                 equipment.label(),
@@ -56,6 +59,10 @@ public class IncidentRestMapper {
 
     public DeclareIncidentCommand toCommand(UUID equipmentId, IncidentDescriptionRequest request) {
         return new DeclareIncidentCommand(equipmentId, request.description());
+    }
+
+    public AssignProviderCommand toCommand(UUID incidentId, AssignProviderRequest request) {
+        return new AssignProviderCommand(incidentId, request.providerId(), request.surveillanceConfirmed());
     }
 
     private Integer ratingValue(Incident incident) {

@@ -17,6 +17,7 @@ public record IncidentDetailsResponse(
         long openDurationMinutes,
         Integer rating,
         ProviderResponse provider,
+        boolean providerUnderSurveillance,
         UUID equipmentId,
         String equipmentReference,
         String equipmentLabel,
