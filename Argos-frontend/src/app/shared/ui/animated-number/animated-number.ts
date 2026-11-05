@@ -1,5 +1,14 @@
 import { formatNumber } from '@angular/common';
-import { Component, LOCALE_ID, computed, effect, inject, input, signal, untracked } from '@angular/core';
+import {
+  Component,
+  LOCALE_ID,
+  computed,
+  effect,
+  inject,
+  input,
+  signal,
+  untracked,
+} from '@angular/core';
 import { prefersReducedMotion } from '../../motion';
 
 const ANIMATION_DURATION_MS = 1200;

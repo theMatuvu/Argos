@@ -41,7 +41,8 @@
 }
 
 .map {
-  height: var(--map-height);
+  flex: 1;
+  min-height: var(--map-height);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   isolation: isolate;
@@ -49,7 +50,7 @@
 
 @media (max-width: 48rem) {
   .map {
-    height: var(--map-height-compact);
+    min-height: var(--map-height-compact);
   }
 
   .map-legend {

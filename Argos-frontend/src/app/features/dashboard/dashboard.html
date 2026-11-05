@@ -1,148 +1,140 @@
 <header class="page-header">
   <h1 class="page-title">Tableau de bord</h1>
-  <p class="page-subtitle">Incidents actifs et niveau d'attention de chacun.</p>
+  @if (dashboard(); as dashboard) {
+    <p class="page-subtitle">
+      {{ dashboard.activeIncidents.length | i18nPlural: activeIncidentLabels }}
+      @if (dashboard.activeIncidents.length > 0) {
+        · {{ urgencyCounts().RED | i18nPlural: redAlertLabels }}
+      }
+    </p>
+  }
 </header>
 
 <div class="dashboard-grid">
-  <section class="card">
+  <section class="card map-card">
     <h2 class="card-title">Plan du réseau</h2>
     <app-network-map />
   </section>
 
-  <section class="card">
-    <h2 class="card-title">Suivi des incidents</h2>
+  <section class="card tracking-card" aria-labelledby="tracking-title">
+    <header class="tracking-header">
+      <h2 class="card-title" id="tracking-title">Suivi des incidents</h2>
+      @if (dashboard(); as dashboard) {
+        <span
+          class="out-of-service"
+          [class.is-empty]="dashboard.indicators.outOfServiceEquipmentCount === 0"
+        >
+          {{ dashboard.indicators.outOfServiceEquipmentCount | i18nPlural: outOfServiceLabels }}
+        </span>
+      }
+    </header>
 
-    @if (dashboard(); as dashboard) {
-      <dl class="indicators">
-        <div class="indicator">
-          <dt>Sans prestataire</dt>
-          <dd>{{ dashboard.indicators.unassignedCount }}</dd>
-        </div>
-        <div class="indicator">
-          <dt>En cours de résolution</dt>
-          <dd>{{ dashboard.indicators.assignedCount }}</dd>
-        </div>
-        <div class="indicator">
-          <dt>Résolus à évaluer</dt>
-          <dd>{{ dashboard.indicators.awaitingEvaluationCount }}</dd>
-        </div>
-        <div class="indicator">
-          <dt>Équipements hors service</dt>
-          <dd>{{ dashboard.indicators.outOfServiceEquipmentCount }}</dd>
-        </div>
-      </dl>
-
-      <div class="tracking-filters">
-        <div class="form-field">
-          <label class="form-label" for="attention-filter">Niveau d'attention</label>
-          <select
-            id="attention-filter"
-            class="input"
-            #attentionSelect
-            (change)="filterByAttention(attentionSelect.value)"
+    @if (dashboard()) {
+      <div class="tabs" role="tablist" aria-label="Catégories d'incidents">
+        @for (tab of tabs; track tab) {
+          <button
+            type="button"
+            role="tab"
+            class="tab"
+            [class.is-active]="tab === activeTab()"
+            [attr.aria-selected]="tab === activeTab()"
+            aria-controls="incident-panel"
+            (click)="selectTab(tab)"
           >
-            <option value="">Tous les niveaux</option>
-            @for (level of attentionLevels; track level) {
-              <option [value]="level">{{ attentionLabels[level] }}</option>
-            }
-          </select>
-        </div>
-        <div class="form-field">
-          <label class="form-label" for="sort-order">Trier par</label>
-          <select id="sort-order" class="input" #sortSelect (change)="sortBy(sortSelect.value)">
-            @for (order of sortOrders; track order) {
-              <option [value]="order" [selected]="order === sortOrder()">
-                {{ sortLabels[order] }}
-              </option>
-            }
-          </select>
-        </div>
+            <span class="tab-count">{{ incidentsByTab()[tab].length }}</span>
+            <span class="tab-label">{{ tabLabels[tab] }}</span>
+          </button>
+        }
       </div>
 
-      <div class="tracking-groups">
-        <section>
-          <h3 class="group-title">
-            En attente d'affectation
-            <span class="group-count">{{ unassignedIncidents().length }}</span>
-          </h3>
-          <ul class="incident-list">
-            @for (incident of unassignedIncidents(); track incident.id) {
-              <li>
-                <a class="incident-item" [routerLink]="['/incidents', incident.id]">
-                  <span class="status-badge" [attr.data-status]="incident.attentionLevel">
-                    {{ incident.attentionLevel ? attentionLabels[incident.attentionLevel] : '' }}
-                  </span>
-                  <span class="incident-summary">
-                    <span class="incident-equipment">{{ incident.equipmentLabel }}</span>
-                    <span class="incident-meta">
-                      <span class="reference">{{ incident.equipmentReference }}</span> ·
-                      {{ incident.stationName }}
-                    </span>
-                  </span>
-                  <span class="incident-age">{{ incident.openDurationMinutes | duration }}</span>
-                </a>
-              </li>
-            } @empty {
-              <li class="empty-state">Aucun incident en attente d'affectation.</li>
-            }
-          </ul>
-        </section>
-
-        <section>
-          <h3 class="group-title">
-            En cours de résolution
-            <span class="group-count">{{ assignedIncidents().length }}</span>
-          </h3>
-          <ul class="incident-list">
-            @for (incident of assignedIncidents(); track incident.id) {
-              <li>
-                <a class="incident-item" [routerLink]="['/incidents', incident.id]">
-                  <span class="status-badge" [attr.data-status]="incident.attentionLevel">
-                    {{ incident.attentionLevel ? attentionLabels[incident.attentionLevel] : '' }}
-                  </span>
-                  <span class="incident-summary">
-                    <span class="incident-equipment">{{ incident.equipmentLabel }}</span>
-                    <span class="incident-meta">
-                      <span class="reference">{{ incident.equipmentReference }}</span> ·
-                      {{ incident.stationName }} · {{ incident.provider?.name }}
-                    </span>
-                  </span>
-                  <span class="incident-age">{{ incident.openDurationMinutes | duration }}</span>
-                </a>
-              </li>
-            } @empty {
-              <li class="empty-state">Aucun incident en cours de résolution.</li>
-            }
-          </ul>
-        </section>
-
-        <section>
-          <h3 class="group-title">
-            Résolus, en attente d'évaluation
-            <span class="group-count">{{ dashboard.incidentsAwaitingEvaluation.length }}</span>
-          </h3>
-          <ul class="incident-list">
-            @for (incident of dashboard.incidentsAwaitingEvaluation; track incident.id) {
-              <li>
-                <a class="incident-item" [routerLink]="['/incidents', incident.id]">
-                  <span class="status-badge" [attr.data-status]="incident.status">
-                    {{ statusLabels[incident.status] }}
-                  </span>
-                  <span class="incident-summary">
-                    <span class="incident-equipment">{{ incident.equipmentLabel }}</span>
-                    <span class="incident-meta">
-                      {{ incident.stationName }} · {{ incident.provider?.name }}
-                    </span>
-                  </span>
-                  <span class="incident-age">{{ incident.resolvedAt | date: dateTimeFormat }}</span>
-                </a>
-              </li>
-            } @empty {
-              <li class="empty-state">Toutes les interventions terminées ont été évaluées.</li>
-            }
-          </ul>
-        </section>
+      <div class="tracking-toolbar">
+        <input
+          #searchInput
+          type="search"
+          class="input"
+          placeholder="Station, équipement, prestataire…"
+          aria-label="Rechercher un incident"
+          (input)="search(searchInput.value)"
+        />
+        <select
+          #sortSelect
+          class="input sort-select"
+          aria-label="Trier les incidents"
+          (change)="sortBy(sortSelect.value)"
+        >
+          @for (order of sortOrders; track order) {
+            <option [value]="order" [selected]="order === sortOrder()">
+              {{ sortLabels[order] }}
+            </option>
+          }
+        </select>
       </div>
+
+      @if (activeTab() === 'UNASSIGNED') {
+        <div class="attention-filters" role="group" aria-label="Filtrer par niveau d'attention">
+          <button
+            type="button"
+            class="chip"
+            [class.is-active]="!attentionFilter()"
+            [attr.aria-pressed]="!attentionFilter()"
+            (click)="filterByAttention(null)"
+          >
+            Tous
+            <span class="chip-count">{{ incidentsByTab().UNASSIGNED.length }}</span>
+          </button>
+          @for (level of urgencyLevels; track level) {
+            <button
+              type="button"
+              class="chip"
+              [attr.data-status]="level"
+              [class.is-active]="attentionFilter() === level"
+              [attr.aria-pressed]="attentionFilter() === level"
+              (click)="filterByAttention(level)"
+            >
+              <span class="chip-dot" aria-hidden="true"></span>
+              {{ attentionLabels[level] }}
+              <span class="chip-count">{{ urgencyCounts()[level] }}</span>
+            </button>
+          }
+        </div>
+      }
+
+      <ul class="incident-list" id="incident-panel" role="tabpanel">
+        @for (incident of visibleIncidents(); track incident.id) {
+          <li>
+            <a class="incident-item" [routerLink]="['/incidents', incident.id]">
+              @if (incident.status === 'RESOLVED') {
+                <span class="status-badge" [attr.data-status]="incident.status">
+                  {{ statusLabels[incident.status] }}
+                </span>
+              } @else {
+                <span class="status-badge" [attr.data-status]="incident.attentionLevel">
+                  {{ incident.attentionLevel ? attentionLabels[incident.attentionLevel] : '' }}
+                </span>
+              }
+              <span class="incident-summary">
+                <span class="incident-equipment">{{ incident.equipmentLabel }}</span>
+                <span class="incident-meta">
+                  <span class="reference">{{ incident.equipmentReference }}</span> ·
+                  {{ incident.stationName }}
+                  @if (incident.provider; as provider) {
+                    · {{ provider.name }}
+                  }
+                </span>
+              </span>
+              <span class="incident-age">
+                @if (incident.resolvedAt; as resolvedAt) {
+                  {{ resolvedAt | date: dateTimeFormat }}
+                } @else {
+                  {{ incident.openDurationMinutes | duration }}
+                }
+              </span>
+            </a>
+          </li>
+        } @empty {
+          <li class="empty-state">{{ emptyMessage() }}</li>
+        }
+      </ul>
     } @else if (errorMessage(); as message) {
       <p class="alert alert-error" role="alert">{{ message }}</p>
     }

@@ -77,5 +77,6 @@
   --form-max-width: 40rem;
   --map-height: 32rem;
   --map-height-compact: 22rem;
+  --dashboard-min-height: 40rem;
   --map-tiles-filter: grayscale(1) contrast(0.85) brightness(1.08);
 }

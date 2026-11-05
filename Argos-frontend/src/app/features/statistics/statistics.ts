@@ -8,7 +8,11 @@ import { AnimatedNumber } from '../../shared/ui/animated-number/animated-number'
 import { Chart, ChartOption } from '../../shared/ui/chart/chart';
 import { EQUIPMENT_TYPE_LABELS } from '../equipments/equipment.model';
 import { ATTENTION_LEVEL_LABELS, AttentionLevel } from '../incidents/incident.model';
-import { EVALUATION_COUNT_LABELS, ProviderSummary, RATING_SCALE } from '../providers/provider.model';
+import {
+  EVALUATION_COUNT_LABELS,
+  ProviderSummary,
+  RATING_SCALE,
+} from '../providers/provider.model';
 import { ProviderService } from '../providers/provider.service';
 import {
   RankingEntry,
@@ -138,7 +142,10 @@ export class Statistics {
 
   private incidentsByType({ equipmentTypes }: NetworkStatistics): RankingEntry[] {
     return equipmentTypes
-      .map(({ type, incidentCount }) => ({ label: EQUIPMENT_TYPE_LABELS[type], value: incidentCount }))
+      .map(({ type, incidentCount }) => ({
+        label: EQUIPMENT_TYPE_LABELS[type],
+        value: incidentCount,
+      }))
       .sort(byDescendingValue);
   }
 

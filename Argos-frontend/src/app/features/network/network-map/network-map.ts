@@ -78,13 +78,18 @@ export class NetworkMap {
   }
 
   private initialize(): void {
-    const leafletMap = L.map(this.mapContainer().nativeElement, {
+    const container = this.mapContainer().nativeElement;
+    const leafletMap = L.map(container, {
       center: PARIS_CENTER,
       zoom: INITIAL_ZOOM,
     });
     L.tileLayer(TILE_URL, { attribution: TILE_ATTRIBUTION, maxZoom: MAX_ZOOM }).addTo(leafletMap);
     leafletMap.createPane(STATIONS_PANE);
     this.leafletMap = leafletMap;
+
+    const resizeObserver = new ResizeObserver(() => leafletMap.invalidateSize());
+    resizeObserver.observe(container);
+    this.destroyRef.onDestroy(() => resizeObserver.disconnect());
 
     this.networkService
       .getNetwork()

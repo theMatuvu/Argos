@@ -25,12 +25,14 @@ public class SecurityConfig {
     private static final String LOGOUT_URL = "/auth/logout";
     private static final String SESSION_COOKIE = "JSESSIONID";
     private static final String OPERATIONS_MANAGER = ProfileType.OPERATIONS_MANAGER.name();
+    private static final String[] API_DOCUMENTATION_URLS = {"/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**"};
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/actuator/health", "/error").permitAll()
+                        .requestMatchers(API_DOCUMENTATION_URLS).permitAll()
                         .requestMatchers(HttpMethod.POST, "/users").hasRole(OPERATIONS_MANAGER)
                         .requestMatchers(HttpMethod.PUT, "/incidents/*/provider").hasRole(OPERATIONS_MANAGER)
                         .requestMatchers(HttpMethod.POST, "/incidents/*/resolution").hasRole(OPERATIONS_MANAGER)

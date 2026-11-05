@@ -27,6 +27,14 @@ server:
   servlet:
     context-path: /api
 
+springdoc:
+  show-login-endpoint: true
+  swagger-ui:
+    csrf:
+      enabled: true
+    operations-sorter: method
+    tags-sorter: alpha
+
 management:
   endpoints:
     web:
