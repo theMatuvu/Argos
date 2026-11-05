@@ -17,6 +17,12 @@ export interface ProviderDetails extends ProviderSummary {
   resolvedIncidents: IncidentDetails[];
 }
 
+export const EVALUATION_COUNT_LABELS = {
+  '=0': 'Aucune évaluation',
+  '=1': '1 évaluation',
+  other: '# évaluations',
+};
+
 export const SURVEILLANCE_LABEL = 'sous surveillance';
 
 export const PROVIDER_UNDER_SURVEILLANCE_CODE = 'PROVIDER_UNDER_SURVEILLANCE';

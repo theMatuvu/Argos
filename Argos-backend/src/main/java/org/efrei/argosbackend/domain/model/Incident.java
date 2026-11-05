@@ -10,6 +10,7 @@ import org.efrei.argosbackend.domain.model.enums.IncidentStatus;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.UUID;
 
 public record Incident(
@@ -59,6 +60,10 @@ public record Incident(
 
     public Duration openDuration(LocalDateTime now) {
         return Duration.between(openedAt, isResolved() ? resolvedAt : now);
+    }
+
+    public Optional<Duration> resolutionTime() {
+        return isResolved() ? Optional.of(Duration.between(openedAt, resolvedAt)) : Optional.empty();
     }
 
     public AttentionLevel attentionLevel(LocalDateTime now) {

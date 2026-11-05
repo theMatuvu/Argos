@@ -5,15 +5,9 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { catchError, of } from 'rxjs';
 import { apiErrorMessage } from '../../../core/http/api-error';
-import { SURVEILLANCE_LABEL } from '../provider.model';
+import { EVALUATION_COUNT_LABELS, SURVEILLANCE_LABEL } from '../provider.model';
 import { ProviderService } from '../provider.service';
 import { RatingStars } from '../rating-stars/rating-stars';
-
-const EVALUATION_COUNT_LABELS = {
-  '=0': 'Aucune évaluation',
-  '=1': '1 évaluation',
-  other: '# évaluations',
-};
 
 @Component({
   selector: 'app-provider-list',

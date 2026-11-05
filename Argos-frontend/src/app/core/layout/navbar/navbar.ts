@@ -12,6 +12,7 @@ interface NavLink {
 
 const NAV_LINKS: NavLink[] = [
   { path: '/dashboard', label: 'Tableau de bord' },
+  { path: '/statistics', label: 'Statistiques' },
   { path: '/equipments', label: 'Équipements' },
   { path: '/history', label: 'Historique' },
   { path: '/providers', label: 'Prestataires' },
