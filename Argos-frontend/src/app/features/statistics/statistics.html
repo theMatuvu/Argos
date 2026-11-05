@@ -1,0 +1,175 @@
+<header class="page-header">
+  <h1 class="page-title">Statistiques</h1>
+  <p class="page-subtitle">
+    Activité du réseau, délais de résolution et qualité des interventions.
+  </p>
+</header>
+
+@if (view(); as view) {
+  <section class="kpi-grid" aria-label="Indicateurs clés">
+    <article class="card kpi reveal" style="--stagger: 0; --kpi-accent: var(--color-attention-red)">
+      <h2 class="kpi-label">Incidents actifs</h2>
+      <p class="kpi-value">
+        <app-animated-number [value]="view.indicators.activeIncidentCount" />
+      </p>
+      <p class="kpi-hint">Sans prestataire : {{ view.indicators.unassignedIncidentCount }}</p>
+    </article>
+
+    <article class="card kpi reveal" style="--stagger: 1; --kpi-accent: var(--color-accent)">
+      <h2 class="kpi-label">Ouverts sur {{ view.periodDays }} jours</h2>
+      <p class="kpi-value">
+        <app-animated-number [value]="view.indicators.openedIncidentCount" />
+      </p>
+      <p class="kpi-hint">Résolus sur la période : {{ view.indicators.resolvedIncidentCount }}</p>
+      <app-chart class="kpi-sparkline" [options]="view.openedSparkline" />
+    </article>
+
+    <article class="card kpi reveal" style="--stagger: 2; --kpi-accent: var(--color-primary)">
+      <h2 class="kpi-label">Délai moyen de résolution</h2>
+      <p class="kpi-value">
+        @if (view.averageResolutionHours !== null) {
+          <app-animated-number
+            [value]="view.averageResolutionHours"
+            [digitsFormat]="hoursFormat"
+          /><span class="kpi-unit">h</span>
+        } @else {
+          —
+        }
+      </p>
+      <p class="kpi-hint">Entre la déclaration et la résolution</p>
+    </article>
+
+    <article
+      class="card kpi reveal"
+      style="--stagger: 3; --kpi-accent: var(--color-attention-assigned)"
+    >
+      <h2 class="kpi-label">Note des prestataires</h2>
+      <p class="kpi-value">
+        @if (view.indicators.averageRating !== null) {
+          <app-animated-number
+            [value]="view.indicators.averageRating"
+            [digitsFormat]="ratingFormat"
+          /><span class="kpi-unit">/ {{ maxRating }}</span>
+        } @else {
+          —
+        }
+      </p>
+      <p class="kpi-hint">{{ view.indicators.evaluationCount | i18nPlural: evaluationCountLabels }}</p>
+    </article>
+  </section>
+
+  <div class="charts-grid">
+    <section class="card chart-card chart-card-wide reveal" style="--stagger: 4">
+      <header class="chart-header">
+        <div>
+          <h2 class="card-title">Activité sur {{ view.periodDays }} jours</h2>
+          <p class="chart-subtitle">Incidents ouverts et résolus chaque jour</p>
+        </div>
+        <dl class="chart-totals">
+          <div>
+            <dt>Ouverts</dt>
+            <dd>{{ view.indicators.openedIncidentCount }}</dd>
+          </div>
+          <div>
+            <dt>Résolus</dt>
+            <dd>{{ view.indicators.resolvedIncidentCount }}</dd>
+          </div>
+        </dl>
+      </header>
+      <app-chart class="chart-activity" [options]="view.activity" />
+    </section>
+
+    <section class="card chart-card chart-card-narrow reveal" style="--stagger: 5">
+      <header class="chart-header">
+        <div>
+          <h2 class="card-title">Niveau d'attention</h2>
+          <p class="chart-subtitle">Répartition des incidents actifs</p>
+        </div>
+      </header>
+      @if (view.indicators.activeIncidentCount > 0) {
+        <div class="donut">
+          <app-chart class="chart-donut" [options]="view.attention" />
+          <p class="donut-center">
+            <span class="donut-total">
+              <app-animated-number [value]="view.indicators.activeIncidentCount" />
+            </span>
+            <span class="donut-caption">actifs</span>
+          </p>
+        </div>
+        <ul class="attention-legend">
+          @for (share of view.attentionShares; track share.level) {
+            <li class="legend-item">
+              <span class="legend-dot" [style.background-color]="share.color"></span>
+              <span>{{ share.label }}</span>
+              <span class="legend-count">{{ share.count }}</span>
+              <span class="legend-share">{{ share.share | percent }}</span>
+            </li>
+          }
+        </ul>
+      } @else {
+        <p class="empty-state">Aucun incident actif.</p>
+      }
+    </section>
+
+    <section class="card chart-card reveal" style="--stagger: 6">
+      <header class="chart-header">
+        <div>
+          <h2 class="card-title">Incidents par type d'équipement</h2>
+          <p class="chart-subtitle">Nombre total d'incidents déclarés</p>
+        </div>
+      </header>
+      <app-chart class="chart-ranking" [options]="view.incidentsByType.options" />
+    </section>
+
+    <section class="card chart-card reveal" style="--stagger: 7">
+      <header class="chart-header">
+        <div>
+          <h2 class="card-title">Délai moyen de résolution</h2>
+          <p class="chart-subtitle">Par type d'équipement, en heures</p>
+        </div>
+      </header>
+      @if (view.resolutionByType.isEmpty) {
+        <p class="empty-state">Aucun incident résolu pour le moment.</p>
+      } @else {
+        <app-chart class="chart-ranking" [options]="view.resolutionByType.options" />
+      }
+    </section>
+
+    <section class="card chart-card reveal" style="--stagger: 8">
+      <header class="chart-header">
+        <div>
+          <h2 class="card-title">Stations les plus touchées</h2>
+          <p class="chart-subtitle">Nombre total d'incidents déclarés</p>
+        </div>
+      </header>
+      @if (view.stations.isEmpty) {
+        <p class="empty-state">Aucun incident déclaré pour le moment.</p>
+      } @else {
+        <app-chart class="chart-ranking" [options]="view.stations.options" />
+      }
+    </section>
+
+    <section class="card chart-card reveal" style="--stagger: 9">
+      <header class="chart-header">
+        <div>
+          <h2 class="card-title">Note moyenne des prestataires</h2>
+          <p class="chart-subtitle">D'après les évaluations des interventions</p>
+        </div>
+      </header>
+      @if (view.providers.isEmpty) {
+        <p class="empty-state">Aucune intervention évaluée pour le moment.</p>
+      } @else {
+        <app-chart class="chart-ranking" [options]="view.providers.options" />
+      }
+    </section>
+  </div>
+} @else if (errorMessage(); as message) {
+  <p class="alert alert-error" role="alert">{{ message }}</p>
+} @else {
+  <div class="kpi-grid" aria-busy="true">
+    @for (placeholder of [1, 2, 3, 4]; track placeholder) {
+      <div class="card skeleton"></div>
+    }
+  </div>
+  <div class="card skeleton skeleton-wide"></div>
+}
