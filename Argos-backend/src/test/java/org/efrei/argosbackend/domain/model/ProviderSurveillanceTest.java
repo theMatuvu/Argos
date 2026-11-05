@@ -55,6 +55,14 @@ class ProviderSurveillanceTest {
     }
 
     @Test
+    void hasNoAverageAndNoSurveillanceByDefault() {
+        ProviderSurveillance none = ProviderSurveillance.none();
+
+        assertTrue(none.recentAverage().isEmpty());
+        assertFalse(none.isUnderSurveillance());
+    }
+
+    @Test
     void sortsEvaluationsByDateWhateverTheInputOrder() {
         List<Incident> incidents = new ArrayList<>(evaluatedInOrder(List.of(3, 3, 3, 3, 3, 2)));
         Collections.reverse(incidents);
